@@ -1,0 +1,186 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+
+    paths:
+      - .github/workflows/ci.yml
+
+  workflow_dispatch:  # Web UI trigger
+
+jobs:
+  build:
+    name: 'build (${{ matrix.os }}, cuda ${{ matrix.cuda_version }})'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: 'ubuntu-22.04'
+            py_version: '3.11'
+            glog_version: '0.7.1'
+            colmap_version: '3.9.1'
+            ceres_solver_version: '2.1.0'
+            cuda_version: '12.5'
+            cuda_arch: '75' #;  80;89'  # Supported GPUs: T4, A100, L4
+
+    env:
+      INSTALL_PREFIX: '${{ github.workspace }}/colmap'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Export environment variables
+        run: |
+          echo "PATH=${{ env.INSTALL_PREFIX }}/bin:/usr/local/cuda/bin:$PATH" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=${{ env.INSTALL_PREFIX }}/lib:/usr/local/cuda/lib64:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+
+      - name: Install build dependencies (base)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential \
+                                  cmake \
+                                  ninja-build \
+                                  git
+
+      - name: Download glog source code
+        run: |
+          wget --content-disposition https://github.com/google/glog/archive/refs/tags/v${{ matrix.glog_version }}.tar.gz
+          tar xf glog-${{ matrix.glog_version }}.tar.gz
+
+      - name: Build and install glog
+        run: |
+          cd glog-${{ matrix.glog_version }}
+          cmake -S . -B build -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=${{ env.INSTALL_PREFIX }}
+          cmake --build build
+          cmake --build build --target install
+
+      - name: Install build dependencies (Ceres Solver)
+        run: |
+          sudo apt-get -y install libgflags-dev \
+                                  libatlas-base-dev \
+                                  libeigen3-dev \
+                                  libsuitesparse-dev
+
+      - name: Install CUDA Toolkit
+        run: |
+          CUDA_VERSION_DASH=$(echo "${{ matrix.cuda_version }}" | sed 's/\./-/')
+          wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
+          sudo dpkg -i cuda-keyring_1.1-1_all.deb
+          sudo apt-get update
+          sudo apt-get -y install cuda-toolkit-${CUDA_VERSION_DASH}
+
+      - name: Download Ceres Solver source code
+        run: |
+          wget http://ceres-solver.org/ceres-solver-${{ matrix.ceres_solver_version }}.tar.gz
+          tar xf ceres-solver-${{ matrix.ceres_solver_version }}.tar.gz
+
+      - name: Build and install Ceres Solver
+        run: |
+          mkdir ${{ github.workspace }}/install_dir
+          cd ceres-solver-${{ matrix.ceres_solver_version }}
+
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_INSTALL_PREFIX=${{ env.INSTALL_PREFIX }} \
+                    -DCMAKE_CUDA_ARCHITECTURES="${{ matrix.cuda_arch }}" \
+                    -DBUILD_TESTING=OFF \
+                    -DBUILD_EXAMPLES=OFF
+          make -j$(nproc)
+          make install
+
+      - name: Install build dependencies (COLMAP)
+        run: |
+          sudo apt-get install libboost-program-options-dev \
+                               libboost-filesystem-dev \
+                               libboost-graph-dev \
+                               libboost-system-dev \
+                               libeigen3-dev \
+                               libflann-dev \
+                               libfreeimage-dev \
+                               libmetis-dev \
+                               libgtest-dev \
+                               libsqlite3-dev \
+                               libglew-dev \
+                               qtbase5-dev \
+                               libqt5opengl5-dev \
+                               libcgal-dev \
+
+      - name: Download COLMAP source code
+        run: |
+          wget --content-disposition https://github.com/colmap/colmap/archive/refs/tags/${{ matrix.colmap_version }}.tar.gz
+          tar xf colmap-${{ matrix.colmap_version }}.tar.gz
+      
+      - name: Build and install COLMAP
+        run: |
+          cd colmap-${{ matrix.colmap_version }}
+          mkdir build
+          cd build
+          cmake .. -GNinja \
+                    -DCMAKE_INSTALL_PREFIX=${{ env.INSTALL_PREFIX }} \
+                    -DCMAKE_CUDA_ARCHITECTURES="${{ matrix.cuda_arch }}"
+          ninja
+          ninja install
+
+      - name: Test COLMAP
+        run: colmap -h
+
+      - name: Clone instant-ngp repository
+        run: git clone --recursive https://github.com/nvlabs/instant-ngp
+
+      - name: Installing build dependencies (instant-ngp)
+        run: |
+          sudo apt-get install -y python3-dev \
+                                  python3-pip \
+                                  libopenexr-dev \
+                                  libxi-dev \
+                                  libglfw3-dev \
+                                  libglew-dev \
+                                  libomp-dev \
+                                  libxinerama-dev \
+                                  libxcursor-dev
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.py_version }}
+
+      - name: Install Python dependencies (instant-ngp)
+        run: python -m pip install -r instant-ngp/requirements.txt
+
+      - name: Build and install instant-ngp
+        run: |
+          cd instant-ngp
+          cmake . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+                            -DNGP_BUILD_WITH_GUI=off \
+                            -DCMAKE_CUDA_ARCHITECTURES="${{ matrix.cuda_arch }}"
+          cmake --build build --config RelWithDebInfo -j
+          cmake --install build
+          ls -l build
+
+      - name: Test instant-ngp
+        run: instant-ngp --help
+        continue-on-error: true
+
+      - name: Package runtime dependencies
+        run: tar czf colmap-${{ matrix.colmap_version }}-${{ matrix.os }}.tar.gz -C ${{ env.INSTALL_PREFIX }} .
+
+      - name: Update tag
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: 'continuous'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: ncipollo/release-action@v1
+        with:
+          name: 'Continuous build'
+          tag: 'continuous'
+          commit: 'main'
+          makeLatest: true
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          artifacts: 'colmap-${{ matrix.colmap_version }}-${{ matrix.os }}.tar.gz,instant-ngp/build/instant-ngp,instant-ngp/build/pyngp*.so'
+          body: 'Binaries are compatible with current Google Colab version'
