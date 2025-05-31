@@ -9,17 +9,14 @@ on:
 
   workflow_dispatch: # manual trigger
 
-env:
-  UBUNTU_VERSION: '22.04'
-  CUDA_TOOLKIT_VERSION: '12.5'
-
 jobs:
   build:
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: ['ubuntu-${env.UBUNTU_VERSION}']
+        os: ['ubuntu 22.04']
+        cuda_version: [12.5]
 
     steps:
       - name: Checkout repository
