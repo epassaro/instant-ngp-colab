@@ -15,7 +15,7 @@ env:
 
 jobs:
   instant-ngp:
-    runs-on: ubuntu-${{ env.UBUNTU_VERSION }}
+    runs-on: ubuntu-${ env.UBUNTU_VERSION }
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
