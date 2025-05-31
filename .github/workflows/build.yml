@@ -10,12 +10,12 @@ on:
   workflow_dispatch: # manual trigger
 
 env:
-  UBUNTU_VERSION: '22.04'
+  UBUNTU_VERSION: 'ubuntu-22.04'
   CUDA_TOOLKIT_VERSION: '12.5'
 
 jobs:
   instant-ngp:
-    runs-on: ubuntu-${{ env.UBUNTU_VERSION }}
+    runs-on: ${{ env.UBUNTU_VERSION }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
