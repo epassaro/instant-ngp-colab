@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-22.04']
-        cuda_version: ['12.5.1']
+        cuda_version: ['12.5.0']
 
     steps:
       - name: Checkout repository
@@ -31,7 +31,7 @@ jobs:
       - name: Install CUDA Toolkit
         run: |
           wget https://developer.download.nvidia.com/compute/cuda/12.5.0/local_installers/cuda_12.5.0_555.42.02_linux.run
-          sudo sh cuda_12.5.0_555.42.02_linux.run
+          sudo bash cuda_12.5.0_555.42.02_linux.run
 
       - name: Clone instant-ngp repository
         run: git clone --recursive https://github.com/nvlabs/instant-ngp
