@@ -16,7 +16,7 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-22.04']
-        cuda_version: [12.5]
+        cuda_version: ['12.5']
 
     steps:
       - name: Checkout repository
@@ -37,7 +37,7 @@ jobs:
       - name: Clone instant-ngp repository
         run: git clone --recursive https://github.com/nvlabs/instant-ngp
 
-      - name: Build and install
+      - name: Build instant-ngp
         run: |
           export PATH="/usr/local/cuda/bin:$PATH"
           export LD_LIBRARY_PATH="/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
