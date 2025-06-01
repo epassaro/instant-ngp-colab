@@ -6,6 +6,7 @@ on:
       - main
 
     paths:
+      - .github/workflows/deploy.yml
       - install.sh
 
   workflow_dispatch:  # manual trigger
