@@ -54,9 +54,7 @@ jobs:
           export LD_LIBRARY_PATH="/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
 
           cd instant-ngp
-          cmake . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo \ 
-                            -DNGP_BUILD_WITH_GUI=off \
-                            -DCMAKE_CUDA_ARCHITECTURES=${{ matrix.cuda_arch }}                     
+          cmake . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -DNGP_BUILD_WITH_GUI=off -DCMAKE_CUDA_ARCHITECTURES=${{ matrix.cuda_arch }}                     
           cmake --build build --config RelWithDebInfo -j
           cmake --install build
 
@@ -68,13 +66,13 @@ jobs:
           cd instant-ngp/build
           cp build/instant-ngp  ../dist
 
-      - name: Zip folder
+      - name: Zip dist folder
         uses: vimtor/action-zip@v1
         with:
           files: instant-ngp/dist
           recursive: false
           dest: instant-ngp.zip
-          
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
