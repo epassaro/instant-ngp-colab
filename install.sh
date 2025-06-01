@@ -6,6 +6,11 @@ GREEN="\033[1;32m"
 CYAN="\033[1;36m"
 RESET="\033[0m"
 
+error_exit() {
+    echo -e "${RED}Error:${RESET} $1"
+    exit 1
+}
+
 echo -e "${CYAN}"
 cat << "EOF"
  ___   __    _  _______  _______  _______  __    _  _______         __    _  _______  _______         _______  _______  ___      _______  _______ 
@@ -18,10 +23,37 @@ cat << "EOF"
 
 EOF
 echo -e "${RESET}"
-echo -e "${GREEN}Installing instant-ngp-colab dependencies...${RESET}"
-echo -e "${RED}Note:${RESET} This script assumes a compatible environment (Colab or local with prerequisites)."
-echo
+echo -e "${GREEN}Checking system requirements...${RESET}"
 
+os_version=$(lsb_release -rs)
+if [[ "$os_version" != "22.04" ]]; then
+    error_exit "This script requires Ubuntu 22.04. Detected version: $os_version"
+fi
+echo -e "${GREEN}✔ Ubuntu 22.04 detected${RESET}"
+
+python_version=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+if [[ "$python_version" != "3.11" ]]; then
+    error_exit "Python 3.11 is required. Detected: $python_version"
+fi
+echo -e "${GREEN}✔ Python 3.11 detected${RESET}"
+
+gpu_model=$(nvidia-smi --query-gpu=name --format=csv,noheader | head -n1 || true)
+if [[ "$gpu_model" != *"T4"* ]]; then
+    error_exit "NVIDIA T4 GPU is required. Detected: $gpu_model"
+fi
+echo -e "${GREEN}✔ NVIDIA T4 GPU detected${RESET}"
+
+cuda_version=$(nvcc --version | grep "release" | sed -E 's/.*release ([0-9]+\.[0-9]+).*/\1/')
+if [[ "$cuda_version" != "12.5" ]]; then
+    error_exit "CUDA Toolkit 12.5 is required. Detected: $cuda_version"
+fi
+echo -e "${GREEN}✔ CUDA Toolkit 12.5 detected${RESET}"
+
+#echo
+#echo -e "${GREEN}Installing instant-ngp-colab dependencies...${RESET}"
+
+echo
+echo -e "${GREEN}Downloading and installing instant-ngp binaries...${RESET}"
 wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/instant-ngp
 chmod +x instant-ngp
 cp instant-ngp /usr/local/bin
