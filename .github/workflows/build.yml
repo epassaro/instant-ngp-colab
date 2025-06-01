@@ -5,9 +5,8 @@ on:
     branches:
       - main
 
-    paths-ignore:
-      - '**.md'
-      - install.sh
+    paths:
+      - .github/workflows/build.yml
 
   workflow_dispatch:  # manual trigger
 
