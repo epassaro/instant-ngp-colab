@@ -4,9 +4,10 @@ on:
   push:
     branches:
       - main
+
     paths-ignore:
       - '**.md'
-      - install.sh
+      - scripts/install.sh
 
   workflow_dispatch:  # manual trigger
 
