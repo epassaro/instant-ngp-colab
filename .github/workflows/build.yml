@@ -58,4 +58,4 @@ jobs:
           cmake --install build
 
       - name: List objects
-        run: ls -lR instant-ngp
+        run: ls -lR ${{ github.workspace }}/instant-ngp-colab
