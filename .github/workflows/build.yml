@@ -10,7 +10,7 @@ on:
   workflow_dispatch:  # manual trigger
 
 jobs:
-  build:
+  instant-ngp:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -48,34 +48,52 @@ jobs:
       - name: Install Python dependencies
         run: python -m pip install -r instant-ngp/requirements.txt
 
-      - name: Build and install `instant-ngp`
+      - name: Build and install instant-ngp
         run: |
           export PATH="/usr/local/cuda/bin:$PATH"
           export LD_LIBRARY_PATH="/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
 
           cd instant-ngp
-          cmake . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -DNGP_BUILD_WITH_GUI=off -DCMAKE_CUDA_ARCHITECTURES=${{ matrix.cuda_arch }}                     
+          cmake . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+                            -DNGP_BUILD_WITH_GUI=off \
+                            -DCMAKE_CUDA_ARCHITECTURES=${{ matrix.cuda_arch }}                 
           cmake --build build --config RelWithDebInfo -j
           cmake --install build
-
-      - run: ls -lR .
-
-      - name: Create dist folder
-        run: |
-          mkdir -p instant-ngp/dist
-          cd instant-ngp/build
-          cp instant-ngp  ../dist
-
-      - name: Zip dist folder
-        uses: vimtor/action-zip@v1
-        with:
-          files: instant-ngp/dist
-          recursive: false
-          dest: instant-ngp.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: assets
-          path: instant-ngp.zip
+          name: instant-ngp-bin
+          path: instant-ngp/build/instant-ngp
           if-no-files-found: error
+
+  release:
+    needs: [instant-ngp]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update tag
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: 'continuous'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: instant-ngp-bin
+          path: instant-ngp-bin
+
+      - uses: ncipollo/release-action@v1
+        with:
+          name: 'Continuous build'
+          tag: 'continuous'
+          commit: 'main'
+          makeLatest: true
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          artifacts: 'instant-ngp-bin/*'
+          body: 'Binaries are compatible with current Google Colab version'
