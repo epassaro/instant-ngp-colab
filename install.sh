@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -eu
 
-CYAN="\033[1;36m"
+RED="\033[1;31m"
 GREEN="\033[1;32m"
+CYAN="\033[1;36m"
 RESET="\033[0m"
 
 echo -e "${CYAN}"
