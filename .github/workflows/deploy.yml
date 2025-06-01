@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'scripts/install.sh'
+      - 'install.sh'
 
   workflow_dispatch:  # manual trigger
 
