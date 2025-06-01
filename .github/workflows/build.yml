@@ -7,7 +7,7 @@ on:
     paths-ignore:
       - '**.md'
 
-  workflow_dispatch: # manual trigger
+  workflow_dispatch:  # manual trigger
 
 jobs:
   build:
@@ -16,12 +16,16 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-22.04']
-        cuda_version: ['12-5']  # TODO:
+        cuda_version: ['12-5']  # TODO: replace '-' with '.'
+        cuda_arch: ['75']       # TODO: add support for sm_80 (A100) and sm_89 (L4)
         py_version: ['3.11']
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Cloning instant-ngp repository
+        run: git clone --recursive https://github.com/nvlabs/instant-ngp
 
       - name: Installing build dependencies
         run: |
@@ -41,23 +45,39 @@ jobs:
         with:
           python-version: ${{ matrix.py_version }}
 
-      - name: Cloning instant-ngp repository
-        run: git clone --recursive https://github.com/nvlabs/instant-ngp
+      - name: Install Python dependencies
+        run: python -m pip install -r instant-ngp/requirements.txt
 
       - name: Building and installing `instant-ngp`
         run: |
           export PATH="/usr/local/cuda/bin:$PATH"
           export LD_LIBRARY_PATH="/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
-          export INSTALL_PREFIX="${{ github.workspace }}/instant-ngp/dist"
 
           cd instant-ngp
-          mkdir -p "$INSTALL_PREFIX"
-          cmake . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-                            -DNGP_BUILD_WITH_GUI=off \                            
-                            -DCMAKE_INSTALL_PREFIX="$INSTALL_PREFIX"
-
+          cmake . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo \ 
+                            -DNGP_BUILD_WITH_GUI=off \
+                            -DCMAKE_CUDA_ARCHITECTURES=${{ matrix.cuda_arch }}                     
           cmake --build build --config RelWithDebInfo -j
           cmake --install build
 
-      - name: List objects
-        run: ls -lR ${{ github.workspace }}/instant-ngp-colab
+      - run: ls -lR ${{ github.workspace }}/instant-ngp-colab
+
+      - name: Create dist folder
+        run: |
+          mkdir -p instant-ngp/dist
+          cd instant-ngp/build
+          cp build/instant-ngp  ../dist
+
+      - name: Zip folder
+        uses: vimtor/action-zip@v1
+        with:
+          files: instant-ngp/dist
+          recursive: false
+          dest: instant-ngp.zip
+          
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: assets
+          path: instant-ngp.zip
+          if-no-files-found: error
