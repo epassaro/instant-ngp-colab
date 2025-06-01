@@ -64,7 +64,7 @@ jobs:
         run: |
           mkdir -p instant-ngp/dist
           cd instant-ngp/build
-          cp build/instant-ngp  ../dist
+          cp instant-ngp  ../dist
 
       - name: Zip dist folder
         uses: vimtor/action-zip@v1
