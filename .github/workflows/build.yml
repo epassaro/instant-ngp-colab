@@ -17,6 +17,7 @@ jobs:
       matrix:
         os: ['ubuntu-22.04']
         cuda_version: ['12-5']
+        py_version: ['3.11']
 
     steps:
       - name: Checkout repository
@@ -33,7 +34,12 @@ jobs:
           wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
           sudo dpkg -i cuda-keyring_1.1-1_all.deb
           sudo apt-get update
-          sudo apt-get -y install cuda-toolkit-12-5
+          sudo apt-get -y install cuda-toolkit-${{ matrix.cuda_version }}
+
+      - name: Install Python ${{ matrix.py_version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.py_version }}
 
       - name: Clone instant-ngp repository
         run: git clone --recursive https://github.com/nvlabs/instant-ngp
@@ -44,8 +50,12 @@ jobs:
           export LD_LIBRARY_PATH="/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
 
           cd instant-ngp
-          cmake . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -DNGP_BUILD_WITH_GUI=off
+          cmake . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+                            -DNGP_BUILD_WITH_GUI=off \                            
+                            -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/instant-ngp-colab"
+
           cmake --build build --config RelWithDebInfo -j
+          cmake --install build
 
       - name: List objects
         run: ls -lR instant-ngp
