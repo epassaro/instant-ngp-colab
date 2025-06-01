@@ -6,6 +6,7 @@ on:
       - main
     paths-ignore:
       - '**.md'
+      - './install.sh'
 
   workflow_dispatch:  # manual trigger
 
@@ -15,10 +16,11 @@ jobs:
 
     strategy:
       matrix:
-        os: ['ubuntu-22.04']
-        cuda_version: ['12-5']  # TODO: replace '-' with '.'
-        cuda_arch: ['75']       # TODO: add support for sm_80 (A100) and sm_89 (L4)
-        py_version: ['3.11']
+        include:
+          - os: ['ubuntu-22.04']
+            cuda_version: ['12-5']  # TODO: replace '-' with '.'
+            cuda_arch: ['75']       # TODO: add support for sm_80 (A100) and sm_89 (L4)
+            py_version: ['3.11']
 
     steps:
       - name: Checkout repository
