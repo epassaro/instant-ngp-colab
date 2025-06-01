@@ -7,7 +7,7 @@ on:
 
     paths-ignore:
       - '**.md'
-      - scripts/install.sh
+      - install.sh
 
   workflow_dispatch:  # manual trigger
 
