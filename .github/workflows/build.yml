@@ -99,5 +99,3 @@ jobs:
           artifactErrorsFailBuild: true
           artifacts: 'instant-ngp-bin/*'
           body: 'Binaries are compatible with current Google Colab version'
-
-# hello, world
