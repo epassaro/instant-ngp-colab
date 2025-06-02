@@ -57,8 +57,11 @@ echo -e "${GREEN}  ✔ CUDA Toolkit 12.5 detected${RESET}"
 #echo -e "${GREEN}Installing instant-ngp-colab dependencies...${RESET}"
 
 echo
-echo -e "${GREEN}Downloading and installing instant-ngp binaries...${RESET}"
+echo -e "Downloading and installing instant-ngp binaries..."
 wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/instant-ngp
 chmod +x instant-ngp
 cp instant-ngp /usr/local/bin
 rm instant-ngp
+
+echo
+echo "Everything is set up! You can now run instant-ngp commands in this Colab environment."
