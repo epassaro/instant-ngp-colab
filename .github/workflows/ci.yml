@@ -20,7 +20,7 @@ jobs:
           - os: 'ubuntu-22.04'
             py_version: '3.11'
             glog_version: '0.7.1'
-            colmap_version: '3.11.1'
+            colmap_version: '3.8'
             ceres_solver_version: '2.1.0'
             cuda_version: '12.5'
             cuda_arch: '75' #;80;89'  # Supported GPUs: T4, A100, L4
