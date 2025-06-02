@@ -24,10 +24,10 @@ cat << "EOF"
 EOF
 echo -e "${RESET}"
 
+echo
 echo -e "${CYAN}───────────────────────────────────────────────────────────────${RESET}"
-echo -e "${CYAN}🛠 Script by @epassaro — https://github.com/epassaro${RESET}"
+echo -e "${CYAN}🔗 Project repository: https://github.com/epassaro/instant-ngp-colab${RESET}"
 echo -e "${CYAN}───────────────────────────────────────────────────────────────${RESET}"
-echo -e "🚧 Checking Colab runtime environment..."
 
 echo
 os_version=$(lsb_release -rs)
