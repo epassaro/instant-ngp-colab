@@ -7,7 +7,8 @@ CYAN="\033[1;36m"
 RESET="\033[0m"
 
 error_exit() {
-    echo; echo -e "${RED}Error:${RESET} $1"
+    echo
+    echo -e "${RED}Error:${RESET} $1"
     exit 1
 }
 
@@ -28,8 +29,8 @@ echo -e "${CYAN}─────────────────────�
 echo -e "${CYAN}🔗 Project repository: https://github.com/epassaro/instant-ngp-colab${RESET}"
 echo -e "${CYAN}────────────────────────────────────────────────────────────────────${RESET}"
 
-echo -e "🚧 Checking Colab runtime environment..."
 echo
+echo -e "🚧 Checking Colab runtime environment..."
 os_version=$(lsb_release -rs)
 if [[ "$os_version" != "22.04" ]]; then
     error_exit "This script requires Ubuntu 22.04. Detected version: $os_version"
