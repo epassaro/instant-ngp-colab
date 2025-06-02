@@ -21,16 +21,13 @@ jobs:
             py_version: '3.11'
             glog_version: '0.7.1'
             colmap_version: '3.11.1'
-            ceres_solver_version: '2.2.0'
+            ceres_solver_version: '2.1.0'
             cuda_version: '12.5'
             cuda_arch: '75;80;89'  # Supported GPUs: T4, A100, L4
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Debug
-        run: ls -lR /usr/local
 
       - name: Export environment variables
         run: |
@@ -39,36 +36,11 @@ jobs:
           echo "PKG_CONFIG_PATH=/opt/instant-ngp/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
           echo "PATH=/opt/instant-ngp/bin:$PATH" >> $GITHUB_ENV
 
-      - name: Installing build dependencies \#1
+      - name: Install build dependencies (glog)
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential \
-                                  git \
-                                  cmake \
-                                  libgflags-dev \
-                                  libatlas-base-dev \
-                                  libeigen3-dev \
-                                  libsuitesparse-dev \
-                                  libboost-program-options-dev \
-                                  libboost-filesystem-dev \
-                                  libboost-graph-dev \
-                                  libboost-system-dev \
-                                  libboost-test-dev \
-                                  libfreeimage-dev \
-                                  libmetis-dev \
-                                  libglew-dev \
-                                  qtbase5-dev \
-                                  libqt5opengl5-dev \
-                                  libcgal-dev \
-                                  libflann-dev
-
-      - name: Install CUDA Toolkit v${{ matrix.cuda_version }}
-        run: |
-          CUDA_VERSION_DASH=$(echo "${{ matrix.cuda_version }}" | sed 's/\./-/')
-          wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
-          sudo dpkg -i cuda-keyring_1.1-1_all.deb
-          sudo apt-get update
-          sudo apt-get -y install cuda-toolkit-${CUDA_VERSION_DASH}
+                                  cmake
 
       - name: Download glog v${{matrix.glog_version }} source code
         run: |
@@ -81,6 +53,21 @@ jobs:
           cmake -S . -B build -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/opt/instant-ngp
           cmake --build build
           cmake --build build --target install
+
+      - name: Install build dependencies (Ceres Solver)
+        run: |
+          apt-get -y install libgflags-dev \
+                             libatlas-base-dev \
+                             libeigen3-dev \
+                             libsuitesparse-dev
+
+      - name: Install CUDA Toolkit v${{ matrix.cuda_version }}
+        run: |
+          CUDA_VERSION_DASH=$(echo "${{ matrix.cuda_version }}" | sed 's/\./-/')
+          wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
+          sudo dpkg -i cuda-keyring_1.1-1_all.deb
+          sudo apt-get update
+          sudo apt-get -y install cuda-toolkit-${CUDA_VERSION_DASH}
 
       - name: Download Ceres Solver v${{ matrix.ceres_solver_version }} source code
         run: |
@@ -97,6 +84,21 @@ jobs:
           cmake .. -DCMAKE_INSTALL_PREFIX=/opt/instant-ngp -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF
           make -j$(nproc)
           make install
+
+      - name: Install build dependencies (COLMAP)
+        run: |
+          apt-get install libboost-program-options-dev \
+                          libboost-filesystem-dev \
+                          libboost-graph-dev \
+                          libboost-system-dev \
+                          libboost-test-dev \
+                          libfreeimage-dev \
+                          libmetis-dev \
+                          libglew-dev \
+                          qtbase5-dev \
+                          libqt5opengl5-dev \
+                          libcgal-dev \
+                          libflann-dev
 
       - name: Download COLMAP v${{ matrix.colmap_version }} source code
         run: |
