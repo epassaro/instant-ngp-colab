@@ -84,7 +84,7 @@ jobs:
           mkdir build
           cd build
           cmake .. -DCMAKE_INSTALL_PREFIX=/opt/instant-ngp \
-                    -DCMAKE_CUDA_ARCHITECTURES="${{ matrix.cuda_arch }}"
+                    -DCMAKE_CUDA_ARCHITECTURES="${{ matrix.cuda_arch }}" \
                     -DBUILD_TESTING=OFF \
                     -DBUILD_EXAMPLES=OFF
           make -j$(nproc)
