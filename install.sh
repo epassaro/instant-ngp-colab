@@ -7,7 +7,7 @@ CYAN="\033[1;36m"
 RESET="\033[0m"
 
 error_exit() {
-    echo -e "${RED}Error:${RESET} $1"
+    echo; echo -e "${RED}Error:${RESET} $1"
     exit 1
 }
 
