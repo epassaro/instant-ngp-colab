@@ -51,7 +51,7 @@ jobs:
       - name: Download and extract Ceres Solver v${{ matrix.ceres_solver_version }} source code
         run: |
           wget http://ceres-solver.org/ceres-solver-${{ matrix.ceres_solver_version }}.tar.gz
-          tar xf ceres-solver-${{ ceres-solver-version }}.tar.gz
+          tar xf ceres-solver-${{ matrix.ceres_solver_version }}.tar.gz
 
       - name: Configure and build Ceres Solver v${{ matrix.ceres_solver_version }}
         run: |
