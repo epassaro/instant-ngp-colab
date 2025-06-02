@@ -28,9 +28,7 @@ echo -e "${CYAN}─────────────────────�
 echo -e "${CYAN}🔗 Project repository: https://github.com/epassaro/instant-ngp-colab${RESET}"
 echo -e "${CYAN}────────────────────────────────────────────────────────────────────${RESET}"
 
-echo
 echo -e "🚧 Checking Colab runtime environment..."
-
 echo
 os_version=$(lsb_release -rs)
 if [[ "$os_version" != "22.04" ]]; then
