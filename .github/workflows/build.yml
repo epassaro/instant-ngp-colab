@@ -16,6 +16,7 @@ jobs:
       matrix:
         include:
           - os: 'ubuntu-22.04'
+            glog_version: '0.7.1'
             colmap_version: '3.11.1'
             ceres_solver_version: '2.2.0'
             cuda_arch: '75;80;89'  # Supported GPUs: T4, A100, L4
@@ -30,7 +31,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential \
                                   cmake \
-                                  libgoogle-glog-dev \
                                   libgflags-dev \
                                   libatlas-base-dev \
                                   libeigen3-dev \
@@ -48,12 +48,24 @@ jobs:
                                   libcgal-dev \
                                   libflann-dev
 
+      - name: Download and extract glog v${{matrix.glog_version }} source code
+        run: |
+          wget --content-disposition https://github.com/google/glog/archive/refs/tags/v${{ matrix.glog_version }}.tar.gz
+          tar xf glog-${{ matrix.glog_version }}
+
+      - name: Build glog v${{ matrix.glog_version }}
+        run: |
+          cd glog-${{ matrix.glog_version }}
+          cmake -S . -B build -G "Unix Makefiles"
+          cmake --build build
+          cmake --build build --target install
+
       - name: Download and extract Ceres Solver v${{ matrix.ceres_solver_version }} source code
         run: |
           wget http://ceres-solver.org/ceres-solver-${{ matrix.ceres_solver_version }}.tar.gz
           tar xf ceres-solver-${{ matrix.ceres_solver_version }}.tar.gz
 
-      - name: Configure and build Ceres Solver v${{ matrix.ceres_solver_version }}
+      - name: Build Ceres Solver v${{ matrix.ceres_solver_version }}
         run: |
           mkdir ${{ github.workspace }}/install_dir
           cd ceres-solver-${{ matrix.ceres_solver_version }}
@@ -69,7 +81,7 @@ jobs:
           wget --content-disposition https://github.com/colmap/colmap/archive/refs/tags/${{ matrix.colmap_version }}.tar.gz
           tar xf colmap-${{ matrix.colmap_version }}
       
-      - name: Configure and build COLMAP v${{ matrix.colmap_version }}
+      - name: Build COLMAP v${{ matrix.colmap_version }}
         run: |
           cd colmap-${{ matrix.ceres_solver_version }}
           mkdir build
