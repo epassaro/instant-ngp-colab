@@ -39,8 +39,7 @@ jobs:
       - name: Install build dependencies (glog)
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential \
-                                  cmake
+          sudo apt-get install -y build-essential cmake
 
       - name: Download glog v${{matrix.glog_version }} source code
         run: |
@@ -56,10 +55,10 @@ jobs:
 
       - name: Install build dependencies (Ceres Solver)
         run: |
-          apt-get -y install libgflags-dev \
-                             libatlas-base-dev \
-                             libeigen3-dev \
-                             libsuitesparse-dev
+          sudo apt-get -y install libgflags-dev \
+                                  libatlas-base-dev \
+                                  libeigen3-dev \
+                                  libsuitesparse-dev
 
       - name: Install CUDA Toolkit v${{ matrix.cuda_version }}
         run: |
@@ -87,18 +86,24 @@ jobs:
 
       - name: Install build dependencies (COLMAP)
         run: |
-          apt-get install libboost-program-options-dev \
-                          libboost-filesystem-dev \
+          apt-get install ninja-build \
+                          libboost-program-options-dev \
                           libboost-graph-dev \
                           libboost-system-dev \
-                          libboost-test-dev \
+                          libeigen3-dev \
+                          libflann-dev \
                           libfreeimage-dev \
                           libmetis-dev \
+                          libgoogle-glog-dev \
+                          libgtest-dev \
+                          libgmock-dev \
+                          libsqlite3-dev \
                           libglew-dev \
                           qtbase5-dev \
                           libqt5opengl5-dev \
                           libcgal-dev \
-                          libflann-dev
+#libboost-filesystem-dev \
+#libboost-test-dev \
 
       - name: Download COLMAP v${{ matrix.colmap_version }} source code
         run: |
