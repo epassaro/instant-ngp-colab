@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    name: 'build (${{ matrix.os }})'
+    name: 'build (${{ matrix.os }}, cuda ${{ matrix.cuda_version }})'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -44,12 +44,12 @@ jobs:
                                   ninja-build \
                                   git
 
-      - name: Download glog v${{matrix.glog_version }}
+      - name: Download glog source code
         run: |
           wget --content-disposition https://github.com/google/glog/archive/refs/tags/v${{ matrix.glog_version }}.tar.gz
           tar xf glog-${{ matrix.glog_version }}.tar.gz
 
-      - name: Build glog v${{ matrix.glog_version }}
+      - name: Build and install glog
         run: |
           cd glog-${{ matrix.glog_version }}
           cmake -S . -B build -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/opt/instant-ngp
@@ -63,7 +63,7 @@ jobs:
                                   libeigen3-dev \
                                   libsuitesparse-dev
 
-      - name: Install CUDA Toolkit v${{ matrix.cuda_version }}
+      - name: Install CUDA Toolkit
         run: |
           CUDA_VERSION_DASH=$(echo "${{ matrix.cuda_version }}" | sed 's/\./-/')
           wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
@@ -71,19 +71,22 @@ jobs:
           sudo apt-get update
           sudo apt-get -y install cuda-toolkit-${CUDA_VERSION_DASH}
 
-      - name: Download Ceres Solver v${{ matrix.ceres_solver_version }}
+      - name: Download Ceres Solver source code
         run: |
           wget http://ceres-solver.org/ceres-solver-${{ matrix.ceres_solver_version }}.tar.gz
           tar xf ceres-solver-${{ matrix.ceres_solver_version }}.tar.gz
 
-      - name: Build Ceres Solver v${{ matrix.ceres_solver_version }}
+      - name: Build and install Ceres Solver
         run: |
           mkdir ${{ github.workspace }}/install_dir
           cd ceres-solver-${{ matrix.ceres_solver_version }}
 
           mkdir build
           cd build
-          cmake .. -DCMAKE_INSTALL_PREFIX=/opt/instant-ngp -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF
+          cmake .. -DCMAKE_INSTALL_PREFIX=/opt/instant-ngp \
+                    -DCMAKE_CUDA_ARCHITECTURES="86" \
+                    -DBUILD_TESTING=OFF \
+                    -DBUILD_EXAMPLES=OFF
           make -j$(nproc)
           make install
 
@@ -96,7 +99,6 @@ jobs:
                                libflann-dev \
                                libfreeimage-dev \
                                libmetis-dev \
-                               libgoogle-glog-dev \
                                libgtest-dev \
                                libgmock-dev \
                                libsqlite3-dev \
@@ -105,12 +107,12 @@ jobs:
                                libqt5opengl5-dev \
                                libcgal-dev
 
-      - name: Download COLMAP v${{ matrix.colmap_version }}
+      - name: Download COLMAP source code
         run: |
           wget --content-disposition https://github.com/colmap/colmap/archive/refs/tags/${{ matrix.colmap_version }}.tar.gz
           tar xf colmap-${{ matrix.colmap_version }}.tar.gz
       
-      - name: Build COLMAP v${{ matrix.colmap_version }}
+      - name: Build and install COLMAP
         run: |
           cd colmap-${{ matrix.ceres_solver_version }}
           mkdir build
@@ -137,7 +139,7 @@ jobs:
                                   libxinerama-dev \
                                   libxcursor-dev
 
-      - name: Install Python v${{ matrix.py_version }}
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.py_version }}
@@ -153,12 +155,12 @@ jobs:
           cd instant-ngp
           cmake . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo \
                             -DNGP_BUILD_WITH_GUI=off \
-                            -DCMAKE_CUDA_ARCHITECTURES=${{ matrix.cuda_arch }}                 
+                            -DCMAKE_CUDA_ARCHITECTURES=${{ matrix.cuda_arch }}                
           cmake --build build --config RelWithDebInfo -j
           cmake --install build
           sudo cp build/instant-ngp /opt/instant-ngp
 
-      - name: Compress instant-ngp
+      - name: Compress /opt/instant-ngp
         run: tar czf instant-ngp.tar.gz /opt/instant-ngp
 
       - name: Upload artifact
