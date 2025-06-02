@@ -58,7 +58,7 @@ jobs:
           cd glog-${{ matrix.glog_version }}
           cmake -S . -B build -G "Unix Makefiles"
           cmake --build build
-          cmake --build build --target install
+          sudo cmake --build build --target install
 
       - name: Download Ceres Solver v${{ matrix.ceres_solver_version }} source code
         run: |
