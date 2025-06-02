@@ -11,22 +11,28 @@ on:
   workflow_dispatch:  # Manual trigger
 
 jobs:
-  colmap:
+  build:
+    runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
         include:
           - os: 'ubuntu-22.04'
+            py_version: '3.11'
             glog_version: '0.7.1'
             colmap_version: '3.11.1'
             ceres_solver_version: '2.2.0'
+            cuda_version: '12.5'
             cuda_arch: '75;80;89'  # Supported GPUs: T4, A100, L4
 
-    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Installing build dependencies
+      - name: Debug
+        run: ls -lR /usr/local
+
+      - name: Installing build dependencies \#1
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential \
@@ -72,21 +78,21 @@ jobs:
 
           mkdir build
           cd build
-          cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install_dir -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF
+          cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF
           make -j$(nproc)
           make install
 
       - name: Download COLMAP v${{ matrix.colmap_version }} source code
         run: |
           wget --content-disposition https://github.com/colmap/colmap/archive/refs/tags/${{ matrix.colmap_version }}.tar.gz
-          tar xf colmap-${{ matrix.colmap_version }}
+          tar xf colmap-${{ matrix.colmap_version }}.tar.gz
       
       - name: Build COLMAP v${{ matrix.colmap_version }}
         run: |
           cd colmap-${{ matrix.ceres_solver_version }}
           mkdir build
           cd build
-          cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install_dir \
+          cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=/usr/local \
                             -DCMAKE_CUDA_ARCHITECTURES=${{ matrix.cuda_arch }}
           ninja
           ninja install
@@ -94,26 +100,10 @@ jobs:
       - name: Test
         run: colmap -h
 
-  instant-ngp:
-    if: false
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        include:
-          - os: 'ubuntu-22.04'
-            cuda_version: '12.5'
-            cuda_arch: '75;80;89'  # Supported GPUs: T4, A100, L4
-            py_version: '3.11'
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Clone instant-ngp repository
         run: git clone --recursive https://github.com/nvlabs/instant-ngp
 
-      - name: Installing build dependencies
+      - name: Installing build dependencies \#2
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential git python3-dev python3-pip libopenexr-dev libxi-dev \
