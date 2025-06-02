@@ -84,7 +84,7 @@ jobs:
           mkdir build
           cd build
           cmake .. -DCMAKE_INSTALL_PREFIX=/opt/instant-ngp \
-                    -DCMAKE_CUDA_ARCHITECTURES="86" \
+                    -DCMAKE_CUDA_ARCHITECTURES=${{ matrix.cuda_arch }}                
                     -DBUILD_TESTING=OFF \
                     -DBUILD_EXAMPLES=OFF
           make -j$(nproc)
@@ -114,7 +114,7 @@ jobs:
       
       - name: Build and install COLMAP
         run: |
-          cd colmap-${{ matrix.ceres_solver_version }}
+          cd colmap-${{ matrix.colmap_version }}
           mkdir build
           cd build
           cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_CUDA_ARCHITECTURES=${{ matrix.cuda_arch }}
