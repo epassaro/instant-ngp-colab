@@ -37,11 +37,15 @@ if [[ "$python_version" != "3.11" ]]; then
 fi
 echo -e "${GREEN}  ✔ Python 3.11 detected${RESET}"
 
-gpu_model=$(nvidia-smi --query-gpu=name --format=csv,noheader | head -n1 || true)
-if [[ "$gpu_model" != *"T4"* ]]; then
-    error_exit "NVIDIA T4 GPU is required. Detected: $gpu_model"
+if ! command -v nvidia-smi &> /dev/null; then
+    error_exit "The 'nvidia-smi' command was not found. Make sure the runtime is set to use a GPU."
 fi
-echo -e "${GREEN}  ✔ NVIDIA T4 GPU detected${RESET}"
+
+gpu_model=$(nvidia-smi --query-gpu=name --format=csv,noheader | head -n1)
+if [[ "$gpu_model" != *"T4"* && "$gpu_model" != *"A100"* && "$gpu_model" != *"L4"* ]]; then
+    error_exit "An NVIDIA T4, A100, or L4 GPU is required. Detected: $gpu_model"
+fi
+echo -e "${GREEN}  ✔ Supported GPU detected: $gpu_model${RESET}"
 
 cuda_version=$(nvcc --version | grep "release" | sed -E 's/.*release ([0-9]+\.[0-9]+).*/\1/')
 if [[ "$cuda_version" != "12.5" ]]; then
