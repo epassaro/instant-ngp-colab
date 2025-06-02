@@ -23,19 +23,19 @@ cat << "EOF"
 
 EOF
 echo -e "${RESET}"
-echo -e "🕵 Checking Colab runtime environment..."
+echo -e "🔎 Verifying Colab runtime environment..."
 
 os_version=$(lsb_release -rs)
 if [[ "$os_version" != "22.04" ]]; then
     error_exit "This script requires Ubuntu 22.04. Detected version: $os_version"
 fi
-echo -e "${GREEN}  ✔ Ubuntu 22.04 detected${RESET}"
+echo -e "${GREEN}    ✔ Ubuntu 22.04 detected${RESET}"
 
 python_version=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
 if [[ "$python_version" != "3.11" ]]; then
     error_exit "Python 3.11 is required. Detected: $python_version"
 fi
-echo -e "${GREEN}  ✔ Python 3.11 detected${RESET}"
+echo -e "${GREEN}    ✔ Python 3.11 detected${RESET}"
 
 if ! command -v nvidia-smi &> /dev/null; then
     error_exit "The 'nvidia-smi' command was not found. Make sure the runtime is set to use a GPU."
@@ -45,13 +45,13 @@ gpu_model=$(nvidia-smi --query-gpu=name --format=csv,noheader | head -n1)
 if [[ "$gpu_model" != *"T4"* && "$gpu_model" != *"A100"* && "$gpu_model" != *"L4"* ]]; then
     error_exit "An NVIDIA T4, A100, or L4 GPU is required. Detected: $gpu_model"
 fi
-echo -e "${GREEN}  ✔ Supported GPU detected: $gpu_model${RESET}"
+echo -e "${GREEN}    ✔ Supported GPU detected: $gpu_model${RESET}"
 
 cuda_version=$(nvcc --version | grep "release" | sed -E 's/.*release ([0-9]+\.[0-9]+).*/\1/')
 if [[ "$cuda_version" != "12.5" ]]; then
     error_exit "CUDA Toolkit 12.5 is required. Detected: $cuda_version"
 fi
-echo -e "${GREEN}  ✔ CUDA Toolkit 12.5 detected${RESET}"
+echo -e "${GREEN}    ✔ CUDA Toolkit 12.5 detected${RESET}"
 
 #echo
 #echo -e "${GREEN}Installing dependencies...${RESET}"
@@ -62,7 +62,7 @@ wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/i
 chmod +x instant-ngp
 cp instant-ngp /usr/local/bin
 rm instant-ngp
-echo -e "${GREEN}  ✔ instant-ngp binary installed${RESET}"
+echo -e "${GREEN}    ✔ instant-ngp binary installed${RESET}"
 
 echo
 echo "🚀 Everything is set up! You can now run instant-ngp commands in this Colab environment."
