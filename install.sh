@@ -23,7 +23,7 @@ cat << "EOF"
 
 EOF
 echo -e "${RESET}"
-echo -e "🦺 Checking Colab runtime environment..."
+echo -e "🚧 Checking Colab runtime environment..."
 
 os_version=$(lsb_release -rs)
 if [[ "$os_version" != "22.04" ]]; then
