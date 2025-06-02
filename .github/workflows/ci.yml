@@ -36,10 +36,13 @@ jobs:
           echo "PKG_CONFIG_PATH=/opt/instant-ngp/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
           echo "PATH=/opt/instant-ngp/bin:$PATH" >> $GITHUB_ENV
 
-      - name: Install build dependencies (glog)
+      - name: Install build dependencies (base)
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential cmake
+          sudo apt-get install -y build-essential \
+                                  cmake \
+                                  ninja-build \
+                                  git
 
       - name: Download glog v${{matrix.glog_version }} source code
         run: |
@@ -86,8 +89,7 @@ jobs:
 
       - name: Install build dependencies (COLMAP)
         run: |
-          apt-get install ninja-build \
-                          libboost-program-options-dev \
+          apt-get install libboost-program-options-dev \
                           libboost-graph-dev \
                           libboost-system-dev \
                           libeigen3-dev \
@@ -157,15 +159,20 @@ jobs:
                             -DCMAKE_CUDA_ARCHITECTURES=${{ matrix.cuda_arch }}                 
           cmake --build build --config RelWithDebInfo -j
           cmake --install build
+          sudo cp build/instant-ngp /opt/instant-ngp
+
+      - name: Compress instant-ngp
+        run: tar czf instant-ngp.tar.gz /opt/instant-ngp
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: instant-ngp-bin
-          path: instant-ngp/build/instant-ngp
+          name: instant-ngp
+          path: instant-ngp.tar.gz
           if-no-files-found: error
 
   release:
+    if: false
     needs: [build]
     runs-on: ubuntu-latest
     steps:
@@ -182,8 +189,8 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: instant-ngp-bin
-          path: instant-ngp-bin
+          name: instant-ngp
+          path: instant-ngp
 
       - uses: ncipollo/release-action@v1
         with:
@@ -193,5 +200,5 @@ jobs:
           makeLatest: true
           allowUpdates: true
           artifactErrorsFailBuild: true
-          artifacts: 'instant-ngp-bin/*'
+          artifacts: 'instant-ngp.tar.gz'
           body: 'Binaries are compatible with current Google Colab version'
