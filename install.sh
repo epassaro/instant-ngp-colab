@@ -69,6 +69,7 @@ chmod +x instant-ngp
 cp instant-ngp /usr/local/bin
 rm instant-ngp
 echo -e "${GREEN}   ✔ instant-ngp binary installed${RESET}"
+#echo -e "${GREEN}   ✔ colmap binary installed${RESET}"
 
 echo
 echo "🚀 Everything is set up! You can now run instant-ngp commands in this Colab environment."
