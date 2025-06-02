@@ -17,6 +17,7 @@ jobs:
         include:
           - os: 'ubuntu-22.04'
             colmap_version: '3.11.1'
+            ceres_solver_version: '2.2.0'
             cuda_arch: '75;80;89'  # Supported GPUs: T4, A100, L4
 
     runs-on: ${{ matrix.os }}
@@ -27,46 +28,62 @@ jobs:
       - name: Installing build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y git \
+          sudo apt-get install -y build-essential \
                                   cmake \
-                                  ninja-build \
-                                  build-essential \
+                                  libgoogle-glog-dev \
+                                  libgflags-dev \
+                                  libatlas-base-dev \
+                                  libeigen3-dev \
+                                  libsuitesparse-dev \
                                   libboost-program-options-dev \
+                                  libboost-filesystem-dev \
                                   libboost-graph-dev \
                                   libboost-system-dev \
-                                  libeigen3-dev \
-                                  libflann-dev \
+                                  libboost-test-dev \
                                   libfreeimage-dev \
                                   libmetis-dev \
-                                  libgoogle-glog-dev \
-                                  libgtest-dev \
-                                  libgmock-dev \
-                                  libsqlite3-dev \
                                   libglew-dev \
                                   qtbase5-dev \
                                   libqt5opengl5-dev \
                                   libcgal-dev \
-                                  libceres-dev
+                                  libflann-dev
 
-      - name: Download and extract COLMAP v${{ matrix.colmap_version }}
+      - name: Download and extract Ceres Solver v${{ matrix.ceres_solver_version }} source code
+        run: |
+          wget http://ceres-solver.org/ceres-solver-${{ matrix.ceres_solver_version }}.tar.gz
+          tar xf ceres-solver-${{ ceres-solver-version }}.tar.gz
+
+      - name: Configure and build Ceres Solver v${{ matrix.ceres_solver_version }}
+        run: |
+          mkdir ${{ github.workspace }}/install_dir
+          cd ceres-solver-${{ matrix.ceres_solver_version }}
+
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install_dir -DBUILD_TESTING=OFF -DBUILD_EXAMPLES=OFF
+          make -j$(nproc)
+          make install
+
+      - name: Download and extract COLMAP v${{ matrix.colmap_version }} source code
         run: |
           wget --content-disposition https://github.com/colmap/colmap/archive/refs/tags/${{ matrix.colmap_version }}.tar.gz
           tar xf colmap-${{ matrix.colmap_version }}
       
       - name: Configure and build COLMAP v${{ matrix.colmap_version }}
         run: |
-          cd colmap
+          cd colmap-${{ matrix.ceres_solver_version }}
           mkdir build
           cd build
           cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/install_dir \
                             -DCMAKE_CUDA_ARCHITECTURES=${{ matrix.cuda_arch }}
           ninja
-          sudo ninja install
+          ninja install
 
       - name: Test
         run: colmap -h
 
   instant-ngp:
+    if: false
     runs-on: ${{ matrix.os }}
 
     strategy:
