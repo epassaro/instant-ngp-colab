@@ -48,10 +48,10 @@ jobs:
                                   libcgal-dev \
                                   libflann-dev
 
-      - name: Download and extract glog v${{matrix.glog_version }} source code
+      - name: Download glog v${{matrix.glog_version }} source code
         run: |
           wget --content-disposition https://github.com/google/glog/archive/refs/tags/v${{ matrix.glog_version }}.tar.gz
-          tar xf glog-${{ matrix.glog_version }}
+          tar xf glog-${{ matrix.glog_version }}.tar.gz
 
       - name: Build glog v${{ matrix.glog_version }}
         run: |
@@ -60,7 +60,7 @@ jobs:
           cmake --build build
           cmake --build build --target install
 
-      - name: Download and extract Ceres Solver v${{ matrix.ceres_solver_version }} source code
+      - name: Download Ceres Solver v${{ matrix.ceres_solver_version }} source code
         run: |
           wget http://ceres-solver.org/ceres-solver-${{ matrix.ceres_solver_version }}.tar.gz
           tar xf ceres-solver-${{ matrix.ceres_solver_version }}.tar.gz
@@ -76,7 +76,7 @@ jobs:
           make -j$(nproc)
           make install
 
-      - name: Download and extract COLMAP v${{ matrix.colmap_version }} source code
+      - name: Download COLMAP v${{ matrix.colmap_version }} source code
         run: |
           wget --content-disposition https://github.com/colmap/colmap/archive/refs/tags/${{ matrix.colmap_version }}.tar.gz
           tar xf colmap-${{ matrix.colmap_version }}
