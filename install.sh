@@ -23,8 +23,13 @@ cat << "EOF"
 
 EOF
 echo -e "${RESET}"
+
+echo -e "${CYAN}───────────────────────────────────────────────────────────────${RESET}"
+echo -e "${CYAN}🛠 Script by @epassaro — https://github.com/epassaro${RESET}"
+echo -e "${CYAN}───────────────────────────────────────────────────────────────${RESET}"
 echo -e "🚧 Checking Colab runtime environment..."
 
+echo
 os_version=$(lsb_release -rs)
 if [[ "$os_version" != "22.04" ]]; then
     error_exit "This script requires Ubuntu 22.04. Detected version: $os_version"
