@@ -23,7 +23,7 @@ jobs:
             colmap_version: '3.11.1'
             ceres_solver_version: '2.1.0'
             cuda_version: '12.5'
-            cuda_arch: '75;80;89'  # Supported GPUs: T4, A100, L4
+            cuda_arch: '75' #;80;89'  # Supported GPUs: T4, A100, L4
 
     steps:
       - name: Checkout repository
@@ -84,7 +84,7 @@ jobs:
           mkdir build
           cd build
           cmake .. -DCMAKE_INSTALL_PREFIX=/opt/instant-ngp \
-                    -DCMAKE_CUDA_ARCHITECTURES=${{ matrix.cuda_arch }}                
+                    -DCMAKE_CUDA_ARCHITECTURES="${{ matrix.cuda_arch }}"
                     -DBUILD_TESTING=OFF \
                     -DBUILD_EXAMPLES=OFF
           make -j$(nproc)
@@ -117,7 +117,9 @@ jobs:
           cd colmap-${{ matrix.colmap_version }}
           mkdir build
           cd build
-          cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_CUDA_ARCHITECTURES=${{ matrix.cuda_arch }}
+          cmake .. -GNinja \
+                    -DCMAKE_INSTALL_PREFIX=/opt/instant-ngp \
+                    -DCMAKE_CUDA_ARCHITECTURES="${{ matrix.cuda_arch }}"
           ninja
           ninja install
 
@@ -149,13 +151,10 @@ jobs:
 
       - name: Build and install instant-ngp
         run: |
-          export PATH="/usr/local/cuda/bin:$PATH"
-          export LD_LIBRARY_PATH="/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
-
           cd instant-ngp
           cmake . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo \
                             -DNGP_BUILD_WITH_GUI=off \
-                            -DCMAKE_CUDA_ARCHITECTURES=${{ matrix.cuda_arch }}                
+                            -DCMAKE_CUDA_ARCHITECTURES="${{ matrix.cuda_arch }}"
           cmake --build build --config RelWithDebInfo -j
           cmake --install build
           sudo cp build/instant-ngp /opt/instant-ngp
