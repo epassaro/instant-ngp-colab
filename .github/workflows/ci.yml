@@ -156,7 +156,7 @@ jobs:
           cmake --build build --config RelWithDebInfo -j
           cmake --install build
 
-          ls -l instant-ngp/build
+          ls -l build
           sudo cp build/instant-ngp /opt/instant-ngp/bin
 
       - name: Test instant-ngp
