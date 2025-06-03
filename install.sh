@@ -60,16 +60,26 @@ fi
 echo -e "${GREEN}   ✔ CUDA Toolkit 12.5 detected${RESET}"
 
 #echo
-#echo -e "${GREEN}Installing dependencies...${RESET}"
+#echo -e "${GREEN}Installing system dependencies...${RESET}"
 
 echo
 echo -e "⬇️ Downloading and installing binaries..."
+
+wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/runtime-deps.tar.gz
+tar xf runtime-deps.tar.gz -C /usr/local
+rm runtime-deps.tar.gz
+echo -e "${GREEN}   ✔ runtime dependencies installed${RESET}"
+
 wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/instant-ngp
 chmod +x instant-ngp
 cp instant-ngp /usr/local/bin
 rm instant-ngp
 echo -e "${GREEN}   ✔ instant-ngp binary installed${RESET}"
-#echo -e "${GREEN}   ✔ colmap binary installed${RESET}"
+
+wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/pyngp.cpython-311-x86_64-linux-gnu.so
+cp pyngp.cpython-311-x86_64-linux-gnu.so /usr/local/lib/python3.11/dist-packages
+rm pyngp.cpython-311-x86_64-linux-gnu.so
+echo -e "${GREEN}   ✔ pyngp binary installed${RESET}"
 
 echo
 echo "🚀 Everything is set up! You can now run instant-ngp commands in this Colab environment."
