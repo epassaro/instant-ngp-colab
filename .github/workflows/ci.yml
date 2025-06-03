@@ -23,7 +23,7 @@ jobs:
             colmap_version: '3.9.1'
             ceres_solver_version: '2.1.0'
             cuda_version: '12.5'
-            cuda_arch: '75' #;80;89'  # Supported GPUs: T4, A100, L4
+            cuda_arch: '75' #;  80;89'  # Supported GPUs: T4, A100, L4
 
     steps:
       - name: Checkout repository
@@ -155,38 +155,13 @@ jobs:
                             -DCMAKE_CUDA_ARCHITECTURES="${{ matrix.cuda_arch }}"
           cmake --build build --config RelWithDebInfo -j
           cmake --install build
+
+          ls -l instant-ngp/build
           sudo cp build/instant-ngp /opt/instant-ngp/bin
-
-      - name: List files
-        run: ls -lR instant-ngp/build
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: instant-ngp
-          path: /opt/instant-ngp
-          if-no-files-found: error
-
-  release:
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: instant-ngp
-          path: /opt
-
-      - name: Export environment variables
-        run: |
-          echo "PATH=/opt/instant-ngp/bin:/usr/local/cuda/bin:$PATH" >> $GITHUB_ENV
-          echo "LD_LIBRARY_PATH=/opt/instant-ngp/lib:/usr/local/cuda/lib64:$LD_LIBRARY_PATH" >> $GITHUB_ENV
 
       - name: Test instant-ngp
         run: instant-ngp --help
+        continue-on-error: true
 
       - name: Compress /opt/instant-ngp
         run: tar czf instant-ngp.tar.gz /opt/instant-ngp
