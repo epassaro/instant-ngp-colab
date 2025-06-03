@@ -1,4 +1,4 @@
-|Component         |Version       |
+| Component        | Version       |
 |------------------|---------------|
 | Ubuntu           | 22.04         |
 | Python           | 3.11          |

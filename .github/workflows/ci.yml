@@ -163,8 +163,8 @@ jobs:
         run: instant-ngp --help
         continue-on-error: true
 
-      - name: Compress /opt/instant-ngp
-        run: tar czf instant-ngp.tar.gz -C /opt instant-ngp
+      - name: Package runtime dependencies
+        run: tar czf runtime-deps.tar.gz -C /opt/instant-ngp .
 
       - name: Update tag
         uses: richardsimko/update-tag@v1
@@ -181,5 +181,5 @@ jobs:
           makeLatest: true
           allowUpdates: true
           artifactErrorsFailBuild: true
-          artifacts: 'instant-ngp.tar.gz'
+          artifacts: 'runtime-deps.tar.gz,instant-ngp/build/instant-ngp,instant-ngp/build/pyngp*.so'
           body: 'Binaries are compatible with current Google Colab version'
