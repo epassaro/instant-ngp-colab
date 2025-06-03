@@ -155,9 +155,7 @@ jobs:
                             -DCMAKE_CUDA_ARCHITECTURES="${{ matrix.cuda_arch }}"
           cmake --build build --config RelWithDebInfo -j
           cmake --install build
-
           ls -l build
-          sudo cp build/instant-ngp /opt/instant-ngp/bin
 
       - name: Test instant-ngp
         run: instant-ngp --help
