@@ -20,7 +20,7 @@ jobs:
           - os: 'ubuntu-22.04'
             py_version: '3.11'
             glog_version: '0.7.1'
-            colmap_version: '3.9'
+            colmap_version: '3.9.1'
             ceres_solver_version: '2.1.0'
             cuda_version: '12.5'
             cuda_arch: '75' #;80;89'  # Supported GPUs: T4, A100, L4
@@ -155,39 +155,41 @@ jobs:
                             -DCMAKE_CUDA_ARCHITECTURES="${{ matrix.cuda_arch }}"
           cmake --build build --config RelWithDebInfo -j
           cmake --install build
-          sudo cp build/instant-ngp /opt/instant-ngp
+          sudo cp build/instant-ngp /opt/instant-ngp/bin
 
-      - name: Compress /opt/instant-ngp
-        run: tar czf instant-ngp.tar.gz /opt/instant-ngp
+      - name: List files
+        run: ls -lR instant-ngp/build
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: instant-ngp
-          path: instant-ngp.tar.gz
+          path: /opt/instant-ngp
           if-no-files-found: error
 
   release:
-    if: false
     needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Export environment variables
-        run: |
-          echo "LD_LIBRARY_PATH=/opt/instant-ngp/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
-          echo "PATH=/opt/instant-ngp/bin:$PATH" >> $GITHUB_ENV
-
-      - name: Test instant-ngp
-        run: instant-ngp --help
-
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: instant-ngp
-          path: instant-ngp
+          path: /opt
+
+      - name: Export environment variables
+        run: |
+          echo "PATH=/opt/instant-ngp/bin:/usr/local/cuda/bin:$PATH" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=/opt/instant-ngp/lib:/usr/local/cuda/lib64:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+
+      - name: Test instant-ngp
+        run: instant-ngp --help
+
+      - name: Compress /opt/instant-ngp
+        run: tar czf instant-ngp.tar.gz /opt/instant-ngp
 
       - name: Update tag
         uses: richardsimko/update-tag@v1
