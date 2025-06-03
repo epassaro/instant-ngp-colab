@@ -8,7 +8,7 @@ on:
     paths:
       - .github/workflows/ci.yml
 
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch:  # Web UI trigger
 
 jobs:
   build:
@@ -31,10 +31,8 @@ jobs:
 
       - name: Export environment variables
         run: |
-          echo "PATH=/opt/instant-ngp/bin:$PATH" >> $GITHUB_ENV
-          echo "LD_LIBRARY_PATH=/opt/instant-ngp/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
-          echo "CMAKE_PREFIX_PATH=/opt/instant-ngp:$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
-          echo "PKG_CONFIG_PATH=/opt/instant-ngp/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
+          echo "PATH=/opt/instant-ngp/bin:/usr/local/cuda/bin:$PATH" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=/opt/instant-ngp/lib:/usr/local/cuda/lib64:$LD_LIBRARY_PATH" >> $GITHUB_ENV
 
       - name: Install build dependencies (base)
         run: |
