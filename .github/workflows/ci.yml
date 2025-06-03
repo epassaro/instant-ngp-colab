@@ -164,7 +164,7 @@ jobs:
         continue-on-error: true
 
       - name: Compress /opt/instant-ngp
-        run: tar czf instant-ngp.tar.gz /opt/instant-ngp
+        run: tar czf instant-ngp.tar.gz -C /opt instant-ngp
 
       - name: Update tag
         uses: richardsimko/update-tag@v1
