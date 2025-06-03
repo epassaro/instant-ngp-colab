@@ -31,10 +31,10 @@ jobs:
 
       - name: Export environment variables
         run: |
+          echo "PATH=/opt/instant-ngp/bin:$PATH" >> $GITHUB_ENV
           echo "LD_LIBRARY_PATH=/opt/instant-ngp/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
           echo "CMAKE_PREFIX_PATH=/opt/instant-ngp:$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
           echo "PKG_CONFIG_PATH=/opt/instant-ngp/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
-          echo "PATH=/opt/instant-ngp/bin:$PATH" >> $GITHUB_ENV
 
       - name: Install build dependencies (base)
         run: |
@@ -93,6 +93,7 @@ jobs:
       - name: Install build dependencies (COLMAP)
         run: |
           sudo apt-get install libboost-program-options-dev \
+                               libboost-filesystem-dev \
                                libboost-graph-dev \
                                libboost-system-dev \
                                libeigen3-dev \
@@ -100,12 +101,11 @@ jobs:
                                libfreeimage-dev \
                                libmetis-dev \
                                libgtest-dev \
-                               libgmock-dev \
                                libsqlite3-dev \
                                libglew-dev \
                                qtbase5-dev \
                                libqt5opengl5-dev \
-                               libcgal-dev
+                               libcgal-dev \
 
       - name: Download COLMAP source code
         run: |
