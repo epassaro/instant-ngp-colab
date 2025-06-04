@@ -25,14 +25,17 @@ jobs:
             cuda_version: '12.5'
             cuda_arch: '75' #;  80;89'  # Supported GPUs: T4, A100, L4
 
+    env:
+      INSTALL_PREFIX: '${{ github.workspace }}/colmap'
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Export environment variables
         run: |
-          echo "PATH=/opt/instant-ngp/bin:/usr/local/cuda/bin:$PATH" >> $GITHUB_ENV
-          echo "LD_LIBRARY_PATH=/opt/instant-ngp/lib:/usr/local/cuda/lib64:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+          echo "PATH=${{ env.INSTALL_PREFIX }}/bin:/usr/local/cuda/bin:$PATH" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=${{ env.INSTALL_PREFIX }}/lib:/usr/local/cuda/lib64:$LD_LIBRARY_PATH" >> $GITHUB_ENV
 
       - name: Install build dependencies (base)
         run: |
@@ -50,7 +53,7 @@ jobs:
       - name: Build and install glog
         run: |
           cd glog-${{ matrix.glog_version }}
-          cmake -S . -B build -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=/opt/instant-ngp
+          cmake -S . -B build -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=${{ env.INSTALL_PREFIX }}
           cmake --build build
           cmake --build build --target install
 
@@ -81,7 +84,7 @@ jobs:
 
           mkdir build
           cd build
-          cmake .. -DCMAKE_INSTALL_PREFIX=/opt/instant-ngp \
+          cmake .. -DCMAKE_INSTALL_PREFIX=${{ env.INSTALL_PREFIX }} \
                     -DCMAKE_CUDA_ARCHITECTURES="${{ matrix.cuda_arch }}" \
                     -DBUILD_TESTING=OFF \
                     -DBUILD_EXAMPLES=OFF
@@ -116,7 +119,7 @@ jobs:
           mkdir build
           cd build
           cmake .. -GNinja \
-                    -DCMAKE_INSTALL_PREFIX=/opt/instant-ngp \
+                    -DCMAKE_INSTALL_PREFIX=${{ env.INSTALL_PREFIX }} \
                     -DCMAKE_CUDA_ARCHITECTURES="${{ matrix.cuda_arch }}"
           ninja
           ninja install
@@ -162,7 +165,7 @@ jobs:
         continue-on-error: true
 
       - name: Package runtime dependencies
-        run: tar czf runtime-deps.tar.gz -C /opt/instant-ngp .
+        run: tar czf colmap-${{ matrix.colmap_version }}-${{ matrix.os }}.tar.gz -C ${{ env.INSTALL_PREFIX }} .
 
       - name: Update tag
         uses: richardsimko/update-tag@v1
