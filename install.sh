@@ -68,7 +68,7 @@ echo -e "⬇️ Downloading and installing binaries..."
 wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/runtime-deps.tar.gz
 tar xf runtime-deps.tar.gz -C /usr/local
 rm runtime-deps.tar.gz
-echo -e "${GREEN}   ✔ runtime dependencies installed${RESET}"
+echo -e "${GREEN}   ✔ colmap installed${RESET}"
 
 wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/instant-ngp
 chmod +x instant-ngp
