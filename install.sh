@@ -65,7 +65,7 @@ echo -e "${GREEN}   ✔ CUDA Toolkit 12.5 detected${RESET}"
 echo
 echo -e "⬇️ Downloading and installing binaries..."
 
-wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/runtime-deps.tar.gz
+wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/colmap-3.9.1-ubuntu-22.04.tar.gz
 tar xf runtime-deps.tar.gz -C /usr/local
 rm runtime-deps.tar.gz
 echo -e "${GREEN}   ✔ colmap installed${RESET}"
