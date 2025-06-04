@@ -182,5 +182,5 @@ jobs:
           makeLatest: true
           allowUpdates: true
           artifactErrorsFailBuild: true
-          artifacts: 'runtime-deps.tar.gz,instant-ngp/build/instant-ngp,instant-ngp/build/pyngp*.so'
+          artifacts: 'colmap-${{ matrix.colmap_version }}-${{ matrix.os }}.tar.gz,instant-ngp/build/instant-ngp,instant-ngp/build/pyngp*.so'
           body: 'Binaries are compatible with current Google Colab version'
