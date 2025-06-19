@@ -12,7 +12,6 @@ on:
 
 jobs:
   build:
-    if: false
     name: 'build (${{ matrix.os }}, cuda ${{ matrix.cuda_version }})'
     runs-on: ${{ matrix.os }}
     strategy:
