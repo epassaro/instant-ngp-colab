@@ -88,4 +88,4 @@ rm pyngp.cpython-311-x86_64-linux-gnu.so
 echo -e "${GREEN}   ✔ pyngp installed${RESET}"
 
 echo
-echo "🚀 Everything is set up! You can now run instant-ngp commands in this Colab environment."
+echo "🚀 Everything is set up! You can now run instant-ngp commands in this Colab environment 😀"
