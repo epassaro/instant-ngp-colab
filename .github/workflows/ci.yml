@@ -25,6 +25,7 @@ jobs:
             ceres_solver_version: '2.1.0'
             cuda_version: '12.5'
             cuda_arch: '75' #;  80;89'  # Supported GPUs: T4, A100, L4
+            libtorch_url: 'https://download.pytorch.org/libtorch/cu124/libtorch-cxx11-abi-shared-with-deps-2.6.0%2Bcu124.zip'
 
     env:
       INSTALL_PREFIX: '${{ github.workspace }}/colmap'
@@ -48,7 +49,7 @@ jobs:
 
       - name: Download glog source code
         run: |
-          wget --content-disposition https://github.com/google/glog/archive/refs/tags/v${{ matrix.glog_version }}.tar.gz
+          wget -q --content-disposition https://github.com/google/glog/archive/refs/tags/v${{ matrix.glog_version }}.tar.gz
           tar xf glog-${{ matrix.glog_version }}.tar.gz
 
       - name: Build and install glog
@@ -68,14 +69,14 @@ jobs:
       - name: Install CUDA Toolkit
         run: |
           CUDA_VERSION_DASH=$(echo "${{ matrix.cuda_version }}" | sed 's/\./-/')
-          wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
+          wget -q https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
           sudo dpkg -i cuda-keyring_1.1-1_all.deb
           sudo apt-get update
           sudo apt-get -y install cuda-toolkit-${CUDA_VERSION_DASH}
 
       - name: Download Ceres Solver source code
         run: |
-          wget http://ceres-solver.org/ceres-solver-${{ matrix.ceres_solver_version }}.tar.gz
+          wget -q http://ceres-solver.org/ceres-solver-${{ matrix.ceres_solver_version }}.tar.gz
           tar xf ceres-solver-${{ matrix.ceres_solver_version }}.tar.gz
 
       - name: Build and install Ceres Solver
@@ -111,7 +112,7 @@ jobs:
 
       - name: Download COLMAP source code
         run: |
-          wget --content-disposition https://github.com/colmap/colmap/archive/refs/tags/${{ matrix.colmap_version }}.tar.gz
+          wget -q --content-disposition https://github.com/colmap/colmap/archive/refs/tags/${{ matrix.colmap_version }}.tar.gz
           tar xf colmap-${{ matrix.colmap_version }}.tar.gz
       
       - name: Build and install COLMAP
@@ -128,10 +129,29 @@ jobs:
       - name: Test COLMAP
         run: colmap -h
 
+      - name: Install build dependencies (OpenSplat)
+        run: |
+          sudo apt-get install build-essential cmake libopencv-dev libtorch-dev
+
+      - name: Clone OpenSplat repository
+        run: |
+          git clone https://github.com/pierotofy/OpenSplat
+
+      - name: Download and install libtorch
+        run: |
+          wget -q ${{ matrix.libtorch_url }} -O libtorch.zip
+          unzip -q libtorch.zip
+
+      - name: Build OpenSplat
+        run: |
+          cd OpenSplat
+          mkdir build && cd build
+          cmake -DCMAKE_PREFIX_PATH=${{ github.workspace }}/libtorch/lib .. && make -j$(nproc)
+
       - name: Clone instant-ngp repository
         run: git clone --recursive https://github.com/nvlabs/instant-ngp
 
-      - name: Installing build dependencies (instant-ngp)
+      - name: Install build dependencies (instant-ngp)
         run: |
           sudo apt-get install -y python3-dev \
                                   python3-pip \
@@ -185,16 +205,3 @@ jobs:
           artifactErrorsFailBuild: true
           artifacts: 'colmap-${{ matrix.colmap_version }}-${{ matrix.os }}.tar.gz,instant-ngp/build/instant-ngp,instant-ngp/build/pyngp*.so'
           body: 'Binaries are compatible with current Google Colab version'
-
-  test:
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Build OpenSplat
-        run: |
-          sudo apt-get install build-essential cmake libopencv-dev libtorch-dev
-          git clone https://github.com/pierotofy/OpenSplat OpenSplat
-          wget https://download.pytorch.org/libtorch/cu124/libtorch-cxx11-abi-shared-with-deps-2.6.0+cu124.zip
-          tar xf libtorch-cxx11-abi-shared-with-deps-2.6.0+cu124.zip
-          cd OpenSplat
-          mkdir build && cd build
-          cmake .. && make -j$(nproc)
