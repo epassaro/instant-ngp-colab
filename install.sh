@@ -61,7 +61,7 @@ echo -e "${GREEN}   ✔ CUDA Toolkit 12.5 detected${RESET}"
 
 echo
 echo -e "📦 Installing system dependencies..."
-apt-get install -qq libmetis5 libspqr2 libcxsparse3 libfreeimage3 libqt5widgets5 -y
+apt install libmetis5 libspqr2 libcxsparse3 libfreeimage3 libqt5widgets5 -y > /dev/null
 
 echo
 echo -e "⬇️ Downloading precompiled binaries..."
