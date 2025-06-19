@@ -59,12 +59,8 @@ if [[ "$cuda_version" != "12.5" ]]; then
 fi
 echo -e "${GREEN}   ✔ CUDA Toolkit 12.5 detected${RESET}"
 
-#echo
-#echo -e "${GREEN}Installing system dependencies...${RESET}"
-
 echo
-echo -e "⬇️ Downloading and installing binaries..."
-
+echo -e "⬇️ Downloading precompiled binaries..."
 wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/colmap-3.9.1-ubuntu-22.04.tar.gz
 tar xf colmap-3.9.1-ubuntu-22.04.tar.gz -C /usr/local
 rm colmap-3.9.1-ubuntu-22.04.tar.gz
@@ -74,12 +70,23 @@ wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/i
 chmod +x instant-ngp
 cp instant-ngp /usr/local/bin
 rm instant-ngp
-echo -e "${GREEN}   ✔ instant-ngp binary installed${RESET}"
+echo -e "${GREEN}   ✔ instant-ngp installed${RESET}"
 
 wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/pyngp.cpython-311-x86_64-linux-gnu.so
 cp pyngp.cpython-311-x86_64-linux-gnu.so /usr/local/lib/python3.11/dist-packages
 rm pyngp.cpython-311-x86_64-linux-gnu.so
-echo -e "${GREEN}   ✔ pyngp binary installed${RESET}"
+echo -e "${GREEN}   ✔ pyngp installed${RESET}"
 
 echo
-echo "🚀 Everything is set up! You can now run instant-ngp commands in this Colab environment."
+echo -e "📦 Installing runtime dependencies..."
+apt-get install -qq libmetis5 libspqr2 libcxsparse3 libfreeimage3 libqt5widgets5 > /dev/null 2>&1
+echo -e "${GREEN}   ✔ libmetis5 installed${RESET}"
+echo -e "${GREEN}   ✔ libspqr2 installed${RESET}"
+echo -e "${GREEN}   ✔ libcxsparse3 installed${RESET}"
+echo -e "${GREEN}   ✔ libfreeimage3 installed${RESET}"
+echo -e "${GREEN}   ✔ libqt5widgets5 installed${RESET}"
+pip install -qq commentjson > /dev/null 2>&1
+echo -e "${GREEN}   ✔ python3-commentjson installed${RESET}"
+
+echo
+echo "🚀 Everything is set up! You can now run instant-ngp commands in this Colab environment 😀"
