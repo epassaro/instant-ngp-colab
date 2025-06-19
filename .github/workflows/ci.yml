@@ -135,10 +135,11 @@ jobs:
         run: |
           git clone https://github.com/pierotofy/OpenSplat
 
-      - name: Download and install libtorch
+      - name: Download libtorch
         run: |
           wget -q ${{ matrix.libtorch_url }} -O libtorch.zip
           unzip -q libtorch.zip
+          rm -rf libtorch.zip
 
       - name: Build OpenSplat
         run: |
