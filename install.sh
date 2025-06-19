@@ -60,11 +60,11 @@ fi
 echo -e "${GREEN}   ✔ CUDA Toolkit 12.5 detected${RESET}"
 
 echo
-echo -e "${GREEN}Installing system dependencies...${RESET}"
+echo -e "📦 Installing system dependencies..."
 apt-get install -qq libmetis5 libspqr2 libcxsparse3 libfreeimage3 libqt5widgets5 -y
 
 echo
-echo -e "⬇️ Downloading and installing binaries..."
+echo -e "⬇️ Downloading precompiled binaries..."
 
 wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/colmap-3.9.1-ubuntu-22.04.tar.gz
 tar xf colmap-3.9.1-ubuntu-22.04.tar.gz -C /usr/local
