@@ -46,6 +46,10 @@ jobs:
                                   ninja-build \
                                   git
 
+      - name: Install build dependencies (OpenSplat)
+        run: |
+          sudo apt-get install libopencv-dev
+
       - name: Download glog source code
         run: |
           wget -q --content-disposition https://github.com/google/glog/archive/refs/tags/v${{ matrix.glog_version }}.tar.gz
@@ -128,10 +132,6 @@ jobs:
       - name: Test COLMAP
         run: colmap -h
 
-      - name: Install build dependencies (OpenSplat)
-        run: |
-          sudo apt-get install build-essential cmake libopencv-dev libtorch-dev
-
       - name: Clone OpenSplat repository
         run: |
           git clone https://github.com/pierotofy/OpenSplat
@@ -202,5 +202,5 @@ jobs:
           makeLatest: true
           allowUpdates: true
           artifactErrorsFailBuild: true
-          artifacts: 'colmap-${{ matrix.colmap_version }}-${{ matrix.os }}.tar.gz,instant-ngp/build/instant-ngp,instant-ngp/build/pyngp*.so'
+          artifacts: 'colmap-${{ matrix.colmap_version }}-${{ matrix.os }}.tar.gz,OpenSplat/build/opensplat,instant-ngp/build/instant-ngp,instant-ngp/build/pyngp*.so'
           body: 'Binaries are compatible with current Google Colab version'
