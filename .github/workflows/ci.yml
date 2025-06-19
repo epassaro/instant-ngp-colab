@@ -46,10 +46,6 @@ jobs:
                                   ninja-build \
                                   git
 
-      - name: Install build dependencies (OpenSplat)
-        run: |
-          sudo apt-get install libopencv-dev
-
       - name: Download glog source code
         run: |
           wget -q --content-disposition https://github.com/google/glog/archive/refs/tags/v${{ matrix.glog_version }}.tar.gz
@@ -132,6 +128,9 @@ jobs:
       - name: Test COLMAP
         run: colmap -h
 
+      - name: Install build dependencies (OpenSplat)
+        run: sudo apt-get install libopencv-dev
+
       - name: Clone OpenSplat repository
         run: |
           git clone https://github.com/pierotofy/OpenSplat
@@ -145,7 +144,7 @@ jobs:
         run: |
           cd OpenSplat
           mkdir build && cd build
-          cmake -DCMAKE_PREFIX_PATH=${{ github.workspace }}/libtorch/lib .. && make -j$(nproc)
+          cmake -DCMAKE_PREFIX_PATH=${{ github.workspace }}/libtorch .. && make -j$(nproc)
 
       - name: Clone instant-ngp repository
         run: git clone --recursive https://github.com/nvlabs/instant-ngp
