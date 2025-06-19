@@ -12,6 +12,7 @@ on:
 
 jobs:
   build:
+    if: false
     name: 'build (${{ matrix.os }}, cuda ${{ matrix.cuda_version }})'
     runs-on: ${{ matrix.os }}
     strategy:
@@ -184,3 +185,16 @@ jobs:
           artifactErrorsFailBuild: true
           artifacts: 'colmap-${{ matrix.colmap_version }}-${{ matrix.os }}.tar.gz,instant-ngp/build/instant-ngp,instant-ngp/build/pyngp*.so'
           body: 'Binaries are compatible with current Google Colab version'
+
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Build OpenSplat
+        run: |
+          sudo apt-get install build-essential cmake libopencv-dev libtorch-dev
+          git clone https://github.com/pierotofy/OpenSplat OpenSplat
+          wget https://download.pytorch.org/libtorch/cu124/libtorch-cxx11-abi-shared-with-deps-2.6.0+cu124.zip
+          tar xf libtorch-cxx11-abi-shared-with-deps-2.6.0+cu124.zip
+          cd OpenSplat
+          mkdir build && cd build
+          cmake .. && make -j$(nproc)
