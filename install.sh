@@ -86,7 +86,7 @@ echo -e "${GREEN}   ✔ libcxsparse3 installed${RESET}"
 echo -e "${GREEN}   ✔ libfreeimage3 installed${RESET}"
 echo -e "${GREEN}   ✔ libqt5widgets5 installed${RESET}"
 pip install -qq commentjson > /dev/null 2>&1
-echo -e "${GREEN}   ✔ commentjson installed${RESET}"
+echo -e "${GREEN}   ✔ python-commentjson installed${RESET}"
 
 echo
 echo "🚀 Everything is set up! You can now run instant-ngp commands in this Colab environment 😀"
