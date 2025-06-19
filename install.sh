@@ -78,13 +78,15 @@ rm pyngp.cpython-311-x86_64-linux-gnu.so
 echo -e "${GREEN}   ✔ pyngp installed${RESET}"
 
 echo
-echo -e "📦 Installing system dependencies..."
+echo -e "📦 Installing runtime dependencies..."
 apt-get install -qq libmetis5 libspqr2 libcxsparse3 libfreeimage3 libqt5widgets5 > /dev/null 2>&1
+pip install -q commentjson
 echo -e "${GREEN}   ✔ libmetis5 installed${RESET}"
 echo -e "${GREEN}   ✔ libspqr2 installed${RESET}"
 echo -e "${GREEN}   ✔ libcxsparse3 installed${RESET}"
 echo -e "${GREEN}   ✔ libfreeimage3 installed${RESET}"
 echo -e "${GREEN}   ✔ libqt5widgets5 installed${RESET}"
+echo -e "${GREEN}   ✔ commentjson installed${RESET}"
 
 echo
 echo "🚀 Everything is set up! You can now run instant-ngp commands in this Colab environment 😀"
