@@ -59,8 +59,9 @@ if [[ "$cuda_version" != "12.5" ]]; then
 fi
 echo -e "${GREEN}   ✔ CUDA Toolkit 12.5 detected${RESET}"
 
-#echo
-#echo -e "${GREEN}Installing system dependencies...${RESET}"
+echo
+echo -e "${GREEN}Installing system dependencies...${RESET}"
+apt-get install -qq libmetis5 libspqr2 libcxsparse3 libfreeimage3 libqt5widgets5 -y
 
 echo
 echo -e "⬇️ Downloading and installing binaries..."
