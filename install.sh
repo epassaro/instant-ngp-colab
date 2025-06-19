@@ -80,12 +80,12 @@ echo -e "${GREEN}   ✔ pyngp installed${RESET}"
 echo
 echo -e "📦 Installing runtime dependencies..."
 apt-get install -qq libmetis5 libspqr2 libcxsparse3 libfreeimage3 libqt5widgets5 > /dev/null 2>&1
-pip install -q commentjson
 echo -e "${GREEN}   ✔ libmetis5 installed${RESET}"
 echo -e "${GREEN}   ✔ libspqr2 installed${RESET}"
 echo -e "${GREEN}   ✔ libcxsparse3 installed${RESET}"
 echo -e "${GREEN}   ✔ libfreeimage3 installed${RESET}"
 echo -e "${GREEN}   ✔ libqt5widgets5 installed${RESET}"
+pip install -qq commentjson > /dev/null 2>&1
 echo -e "${GREEN}   ✔ commentjson installed${RESET}"
 
 echo
