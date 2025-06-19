@@ -64,29 +64,36 @@ echo -e "⬇️ Downloading precompiled binaries..."
 wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/colmap-3.9.1-ubuntu-22.04.tar.gz
 tar xf colmap-3.9.1-ubuntu-22.04.tar.gz -C /usr/local
 rm colmap-3.9.1-ubuntu-22.04.tar.gz
-echo -e "${GREEN}   ✔ colmap installed${RESET}"
+echo -e "${GREEN}   ✔ COLMAP installed${RESET}"
 
-wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/instant-ngp
-chmod +x instant-ngp
-cp instant-ngp /usr/local/bin
-rm instant-ngp
-echo -e "${GREEN}   ✔ instant-ngp installed${RESET}"
+#wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/instant-ngp
+#chmod +x instant-ngp
+#cp instant-ngp /usr/local/bin
+#rm instant-ngp
+#echo -e "${GREEN}   ✔ instant-ngp installed${RESET}"
 
-wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/pyngp.cpython-311-x86_64-linux-gnu.so
-cp pyngp.cpython-311-x86_64-linux-gnu.so /usr/local/lib/python3.11/dist-packages
-rm pyngp.cpython-311-x86_64-linux-gnu.so
-echo -e "${GREEN}   ✔ pyngp installed${RESET}"
+#wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/pyngp.cpython-311-x86_64-linux-gnu.so
+#cp pyngp.cpython-311-x86_64-linux-gnu.so /usr/local/lib/python3.11/dist-packages
+#rm pyngp.cpython-311-x86_64-linux-gnu.so
+#echo -e "${GREEN}   ✔ pyngp installed${RESET}"
 
 echo
-echo -e "📦 Installing runtime dependencies..."
+echo -e "📦 Installing COLMAP runtime dependencies..."
 apt-get install -qq libmetis5 libspqr2 libcxsparse3 libfreeimage3 libqt5widgets5 > /dev/null 2>&1
 echo -e "${GREEN}   ✔ libmetis5 installed${RESET}"
 echo -e "${GREEN}   ✔ libspqr2 installed${RESET}"
 echo -e "${GREEN}   ✔ libcxsparse3 installed${RESET}"
 echo -e "${GREEN}   ✔ libfreeimage3 installed${RESET}"
 echo -e "${GREEN}   ✔ libqt5widgets5 installed${RESET}"
-pip install -qq commentjson > /dev/null 2>&1
-echo -e "${GREEN}   ✔ python3-commentjson installed${RESET}"
+
+echo
+echo -e "📦 Installing OpenSplat runtime dependencies..."
+wget -q https://download.pytorch.org/libtorch/cu124/libtorch-cxx11-abi-shared-with-deps-2.6.0%2Bcu124.zip -O libtorch.zip
+unzip -q libtorch.zip
+rm -rf libtorch.zip
+cp -r libtorch/. /usr/local
+ldconfig ldconfig > /dev/null 2>&1
+echo -e "${GREEN}   ✔ torchlib installed${RESET}"
 
 echo
 echo "🚀 Everything is set up! You can now run instant-ngp commands in this Colab environment 😀"
