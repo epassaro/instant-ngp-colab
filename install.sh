@@ -8,12 +8,12 @@ CYAN="\033[1;36m"
 RESET="\033[0m"
 
 error_exit() {
-    echo -e "${RED}   ✗ Error:${RESET} $1"
+    echo -e "${RED}   ✗ Error: $1${RESET}"
     exit 1
 }
 
 warning() {
-    echo -e "${ORANGE}   ⚠ Warning:${RESET} $1"
+    echo -e "${ORANGE}   ⚠ Warning: $1${RESET}"
 }
 
 echo -e "${CYAN}"
