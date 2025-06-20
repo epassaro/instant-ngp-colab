@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -eu
 
-RED="\033[1;31m"
-ORANGE='\033[1;33m'
-GREEN="\033[1;32m"
-CYAN="\033[1;36m"
+RED="\033[0;31m"
+ORANGE='\033[0;33m'
+GREEN="\033[0;32m"
+CYAN="\033[0;36m"
 RESET="\033[0m"
 
 error_exit() {
