@@ -2,7 +2,7 @@
 set -eu
 
 RED="\033[1;31m"
-ORANGE='\033[0;33m'
+ORANGE='\033[1;33m'
 GREEN="\033[1;32m"
 CYAN="\033[1;36m"
 RESET="\033[0m"
@@ -48,7 +48,7 @@ fi
 echo -e "${GREEN}   ✔ Python 3.11 detected${RESET}"
 
 if ! command -v nvidia-smi &> /dev/null; then
-    warning "The 'nvidia-smi' command was not found. This runtime does not have a GPU."
+    warning "'nvidia-smi' not found. This runtime does not have a GPU."
 else
     gpu_model=$(nvidia-smi --query-gpu=name --format=csv,noheader | head -n1)
     if [[ "$gpu_model" != *"T4"* && "$gpu_model" != *"A100"* && "$gpu_model" != *"L4"* ]]; then
