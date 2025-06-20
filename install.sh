@@ -64,7 +64,9 @@ echo -e "⬇️ Downloading precompiled binaries..."
 wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/colmap-3.9.1-ubuntu-22.04.tar.gz
 tar xf colmap-3.9.1-ubuntu-22.04.tar.gz -C /usr/local
 rm colmap-3.9.1-ubuntu-22.04.tar.gz
-echo -e "${GREEN}   ✔ COLMAP installed${RESET}"
+wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/opensplat
+echo -e "${GREEN}   ✔ colmap installed${RESET}"
+echo -e "${GREEN}   ✔ opensplat installed${RESET}"
 
 #wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/instant-ngp
 #chmod +x instant-ngp
