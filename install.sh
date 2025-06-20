@@ -14,20 +14,20 @@ error_exit() {
 
 echo -e "${CYAN}"
 cat << "EOF"
- ___   __    _  _______  _______  _______  __    _  _______         __    _  _______  _______         _______  _______  ___      _______  _______ 
-|   | |  |  | ||       ||       ||   _   ||  |  | ||       |       |  |  | ||       ||       |       |       ||       ||   |    |   _   ||  _    |
-|   | |   |_| ||  _____||_     _||  |_|  ||   |_| ||_     _| ____  |   |_| ||    ___||    _  | ____  |       ||   _   ||   |    |  |_|  || |_|   |
-|   | |       || |_____   |   |  |       ||       |  |   |  |____| |       ||   | __ |   |_| ||____| |       ||  | |  ||   |    |       ||       |
-|   | |  _    ||_____  |  |   |  |       ||  _    |  |   |         |  _    ||   ||  ||    ___|       |      _||  |_|  ||   |___ |       ||  _   | 
-|   | | | |   | _____| |  |   |  |   _   || | |   |  |   |         | | |   ||   |_| ||   |           |     |_ |       ||       ||   _   || |_|   |
-|___| |_|  |__||_______|  |___|  |__| |__||_|  |__|  |___|         |_|  |__||_______||___|           |_______||_______||_______||__| |__||_______|
+ _______  _______  _______  __    _  _______  _______  ___      _______  _______         _______  _______  ___      _______  _______ 
+|       ||       ||       ||  |  | ||       ||       ||   |    |   _   ||       |       |       ||       ||   |    |   _   ||  _    |
+|   _   ||    _  ||    ___||   |_| ||  _____||    _  ||   |    |  |_|  ||_     _| ____  |       ||   _   ||   |    |  |_|  || |_|   |
+|  | |  ||   |_| ||   |___ |       || |_____ |   |_| ||   |    |       |  |   |  |____| |       ||  | |  ||   |    |       ||       |
+|  |_|  ||    ___||    ___||  _    ||_____  ||    ___||   |___ |       |  |   |         |      _||  |_|  ||   |___ |       ||  _   | 
+|       ||   |    |   |___ | | |   | _____| ||   |    |       ||   _   |  |   |         |     |_ |       ||       ||   _   || |_|   |
+|_______||___|    |_______||_|  |__||_______||___|    |_______||__| |__|  |___|         |_______||_______||_______||__| |__||_______|
 
 EOF
 echo -e "${RESET}"
 
-echo -e "${CYAN}────────────────────────────────────────────────────────────────────${RESET}"
-echo -e "${CYAN}🔗 Project repository: https://github.com/epassaro/instant-ngp-colab${RESET}"
-echo -e "${CYAN}────────────────────────────────────────────────────────────────────${RESET}"
+echo -e "${CYAN}───────────────────────────────────────────────────────────────────${RESET}"
+echo -e "${CYAN}🔗 Project repository: https://github.com/epassaro/opensplat-colab${RESET}"
+echo -e "${CYAN}───────────────────────────────────────────────────────────────────${RESET}"
 
 echo
 echo -e "🚧 Checking Colab runtime environment..."
@@ -82,7 +82,7 @@ echo -e "${GREEN}   ✔ opensplat installed${RESET}"
 #echo -e "${GREEN}   ✔ pyngp installed${RESET}"
 
 echo
-echo -e "📦 Installing COLMAP runtime dependencies..."
+echo -e "📦 Installing runtime dependencies..."
 apt-get install -qq libmetis5 libspqr2 libcxsparse3 libfreeimage3 libqt5widgets5 > /dev/null 2>&1
 echo -e "${GREEN}   ✔ libmetis5 installed${RESET}"
 echo -e "${GREEN}   ✔ libspqr2 installed${RESET}"
@@ -90,8 +90,6 @@ echo -e "${GREEN}   ✔ libcxsparse3 installed${RESET}"
 echo -e "${GREEN}   ✔ libfreeimage3 installed${RESET}"
 echo -e "${GREEN}   ✔ libqt5widgets5 installed${RESET}"
 
-echo
-echo -e "📦 Installing OpenSplat runtime dependencies..."
 wget -q https://download.pytorch.org/libtorch/cu124/libtorch-cxx11-abi-shared-with-deps-2.6.0%2Bcu124.zip -O libtorch.zip
 unzip -q libtorch.zip
 rm -f libtorch.zip
@@ -101,4 +99,4 @@ ldconfig > /dev/null 2>&1
 echo -e "${GREEN}   ✔ torchlib installed${RESET}"
 
 echo
-echo "🚀 Everything is set up! You can now run instant-ngp commands in this Colab environment 😀"
+echo "🚀 Everything is set up! You can now run OpenSplat in this Colab environment 😀"
