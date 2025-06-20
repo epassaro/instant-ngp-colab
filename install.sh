@@ -102,4 +102,4 @@ ldconfig > /dev/null 2>&1
 echo -e "${GREEN}   ✔ torchlib installed${RESET}"
 
 echo
-echo "🚀 Everything is set up! You can now run OpenSplat in this Colab environment 😀"
+echo "🚀 Everything is set up! You can now run OpenSplat in this Colab environment 🫟"
