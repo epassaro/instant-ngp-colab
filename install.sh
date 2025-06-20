@@ -63,15 +63,17 @@ echo
 echo -e "⬇️ Downloading precompiled binaries..."
 wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/colmap-3.9.1-ubuntu-22.04.tar.gz
 tar xf colmap-3.9.1-ubuntu-22.04.tar.gz -C /usr/local
-rm colmap-3.9.1-ubuntu-22.04.tar.gz
-wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/opensplat
+rm -f colmap-3.9.1-ubuntu-22.04.tar.gz
 echo -e "${GREEN}   ✔ colmap installed${RESET}"
+
+wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/opensplat
+chmod +x opensplat
+mv opensplat /usr/local/bin
 echo -e "${GREEN}   ✔ opensplat installed${RESET}"
 
 #wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/instant-ngp
 #chmod +x instant-ngp
-#cp instant-ngp /usr/local/bin
-#rm instant-ngp
+#mv instant-ngp /usr/local/bin
 #echo -e "${GREEN}   ✔ instant-ngp installed${RESET}"
 
 #wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/pyngp.cpython-311-x86_64-linux-gnu.so
@@ -92,8 +94,9 @@ echo
 echo -e "📦 Installing OpenSplat runtime dependencies..."
 wget -q https://download.pytorch.org/libtorch/cu124/libtorch-cxx11-abi-shared-with-deps-2.6.0%2Bcu124.zip -O libtorch.zip
 unzip -q libtorch.zip
-rm -rf libtorch.zip
+rm -f libtorch.zip
 cp -r libtorch/. /usr/local
+rm -rf libtorch/
 ldconfig ldconfig > /dev/null 2>&1
 echo -e "${GREEN}   ✔ torchlib installed${RESET}"
 
