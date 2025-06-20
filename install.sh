@@ -78,7 +78,7 @@ echo -e "${GREEN}   ✔ opensplat installed${RESET}"
 
 #wget -q https://github.com/epassaro/instant-ngp-colab/releases/latest/download/pyngp.cpython-311-x86_64-linux-gnu.so
 #cp pyngp.cpython-311-x86_64-linux-gnu.so /usr/local/lib/python3.11/dist-packages
-#rm pyngp.cpython-311-x86_64-linux-gnu.so
+#rm -f pyngp.cpython-311-x86_64-linux-gnu.so
 #echo -e "${GREEN}   ✔ pyngp installed${RESET}"
 
 echo
@@ -97,7 +97,7 @@ unzip -q libtorch.zip
 rm -f libtorch.zip
 cp -r libtorch/. /usr/local
 rm -rf libtorch/
-ldconfig ldconfig > /dev/null 2>&1
+ldconfig > /dev/null 2>&1
 echo -e "${GREEN}   ✔ torchlib installed${RESET}"
 
 echo
