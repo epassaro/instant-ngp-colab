@@ -2,6 +2,7 @@
 set -eu
 
 RED="\033[1;31m"
+ORANGE='\033[0;33m'
 GREEN="\033[1;32m"
 CYAN="\033[1;36m"
 RESET="\033[0m"
@@ -9,6 +10,12 @@ RESET="\033[0m"
 error_exit() {
     echo
     echo -e "${RED}Error:${RESET} $1"
+    exit 1
+}
+
+warning() {
+    echo
+    echo -e "${ORANGE}Warning:${RESET} $1"
     exit 1
 }
 
@@ -43,13 +50,13 @@ if [[ "$python_version" != "3.11" ]]; then
 fi
 echo -e "${GREEN}   ✔ Python 3.11 detected${RESET}"
 
-#if ! command -v nvidia-smi &> /dev/null; then
-#    error_exit "The 'nvidia-smi' command was not found. Make sure the runtime is set to use a GPU."
-#fi
-#
+if ! command -v nvidia-smi &> /dev/null; then
+    warning "The 'nvidia-smi' command was not found. This runtime does not have a GPU."
+fi
+
 #gpu_model=$(nvidia-smi --query-gpu=name --format=csv,noheader | head -n1)
 #if [[ "$gpu_model" != *"T4"* && "$gpu_model" != *"A100"* && "$gpu_model" != *"L4"* ]]; then
-#    error_exit "An NVIDIA T4, A100, or L4 GPU is required. Detected: $gpu_model"
+#    warning "An NVIDIA T4, A100, or L4 GPU is required. Detected: $gpu_model"
 #fi
 #echo -e "${GREEN}   ✔ Supported GPU detected: $gpu_model${RESET}"
 #

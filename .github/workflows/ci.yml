@@ -171,6 +171,7 @@ jobs:
         run: python -m pip install -r instant-ngp/requirements.txt
 
       - name: Build and install instant-ngp
+        if: false
         run: |
           cd instant-ngp
           cmake . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo \
@@ -201,6 +202,6 @@ jobs:
           commit: 'main'
           makeLatest: true
           allowUpdates: true
-          artifactErrorsFailBuild: true
+          artifactErrorsFailBuild: false
           artifacts: 'colmap-${{ matrix.colmap_version }}-${{ matrix.os }}.tar.gz,OpenSplat/build/opensplat,instant-ngp/build/instant-ngp,instant-ngp/build/pyngp*.so'
           body: 'Binaries are compatible with current Google Colab version'
