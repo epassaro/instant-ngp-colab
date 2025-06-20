@@ -49,19 +49,19 @@ echo -e "${GREEN}   ✔ Python 3.11 detected${RESET}"
 
 if ! command -v nvidia-smi &> /dev/null; then
     warning "The 'nvidia-smi' command was not found. This runtime does not have a GPU."
-fi
+else
+    gpu_model=$(nvidia-smi --query-gpu=name --format=csv,noheader | head -n1)
+    if [[ "$gpu_model" != *"T4"* && "$gpu_model" != *"A100"* && "$gpu_model" != *"L4"* ]]; then
+        error_exit "An NVIDIA T4, A100, or L4 GPU is required. Detected: $gpu_model"
+    fi
+    echo -e "${GREEN}   ✔ Supported GPU detected: $gpu_model${RESET}"
 
-#gpu_model=$(nvidia-smi --query-gpu=name --format=csv,noheader | head -n1)
-#if [[ "$gpu_model" != *"T4"* && "$gpu_model" != *"A100"* && "$gpu_model" != *"L4"* ]]; then
-#    warning "An NVIDIA T4, A100, or L4 GPU is required. Detected: $gpu_model"
-#fi
-#echo -e "${GREEN}   ✔ Supported GPU detected: $gpu_model${RESET}"
-#
-#cuda_version=$(nvcc --version | grep "release" | sed -E 's/.*release ([0-9]+\.[0-9]+).*/\1/')
-#if [[ "$cuda_version" != "12.5" ]]; then
-#    error_exit "CUDA Toolkit 12.5 is required. Detected: $cuda_version"
-#fi
-#echo -e "${GREEN}   ✔ CUDA Toolkit 12.5 detected${RESET}"
+    cuda_version=$(nvcc --version | grep "release" | sed -E 's/.*release ([0-9]+\.[0-9]+).*/\1/')
+    if [[ "$cuda_version" != "12.5" ]]; then
+        error_exit "CUDA Toolkit 12.5 is required. Detected: $cuda_version"
+    fi
+    echo -e "${GREEN}   ✔ CUDA Toolkit 12.5 detected${RESET}"
+fi
 
 echo
 echo -e "⬇️ Downloading precompiled binaries..."
