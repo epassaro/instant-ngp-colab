@@ -94,10 +94,11 @@ echo -e "${GREEN}   ✔ libcxsparse3 installed${RESET}"
 echo -e "${GREEN}   ✔ libfreeimage3 installed${RESET}"
 echo -e "${GREEN}   ✔ libqt5widgets5 installed${RESET}"
 
-cp -r /usr/local/lib/python3.11/dist-packages/torch/bin /usr/local
-cp -r /usr/local/lib/python3.11/dist-packages/torch/include /usr/local
-cp -r /usr/local/lib/python3.11/dist-packages/torch/lib /usr/local
-cp -r /usr/local/lib/python3.11/dist-packages/torch/share /usr/local
+wget -q https://download.pytorch.org/libtorch/cu124/libtorch-cxx11-abi-shared-with-deps-2.6.0%2Bcu124.zip -O libtorch.zip
+unzip -q libtorch.zip
+rm -f libtorch.zip
+cp -r libtorch/. /usr/local
+rm -rf libtorch/
 ldconfig > /dev/null 2>&1
 echo -e "${GREEN}   ✔ torchlib installed${RESET}"
 
