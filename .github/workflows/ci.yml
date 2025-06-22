@@ -23,8 +23,7 @@ jobs:
             colmap_version: '3.9.1'
             ceres_solver_version: '2.1.0'
             cuda_version: '12.5'
-            cuda_arch: '75' #;  80;89'  # Supported GPUs: T4, A100, L4
-            libtorch_url: 'https://download.pytorch.org/libtorch/cu124/libtorch-cxx11-abi-shared-with-deps-2.6.0%2Bcu124.zip'
+            cuda_arch: '75;80;89'  # Supported GPUs: T4, A100, L4
 
     env:
       INSTALL_PREFIX: '${{ github.workspace }}/colmap'
@@ -128,25 +127,6 @@ jobs:
       - name: Test COLMAP
         run: colmap -h
 
-      - name: Install build dependencies (OpenSplat)
-        run: sudo apt-get install libopencv-dev
-
-      - name: Clone OpenSplat repository
-        run: |
-          git clone https://github.com/pierotofy/OpenSplat
-
-      - name: Download libtorch
-        run: |
-          wget -q ${{ matrix.libtorch_url }} -O libtorch.zip
-          unzip -q libtorch.zip
-          rm -rf libtorch.zip
-
-      - name: Build OpenSplat
-        run: |
-          cd OpenSplat
-          mkdir build && cd build
-          cmake -DCMAKE_PREFIX_PATH=${{ github.workspace }}/libtorch .. && make -j$(nproc)
-
       - name: Clone instant-ngp repository
         run: git clone --recursive https://github.com/nvlabs/instant-ngp
 
@@ -203,5 +183,5 @@ jobs:
           makeLatest: true
           allowUpdates: true
           artifactErrorsFailBuild: false
-          artifacts: 'colmap-${{ matrix.colmap_version }}-${{ matrix.os }}.tar.gz,OpenSplat/build/opensplat,instant-ngp/build/instant-ngp,instant-ngp/build/pyngp*.so'
+          artifacts: 'colmap-${{ matrix.colmap_version }}-${{ matrix.os }}.tar.gz,instant-ngp/build/instant-ngp,instant-ngp/build/pyngp*.so'
           body: 'Binaries are compatible with current Google Colab version'
